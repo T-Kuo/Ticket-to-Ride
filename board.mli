@@ -1,13 +1,9 @@
-type player = NoPlayer | Player1 | Player2 | Player3 | Player4 | Player5
-
-type color = Colorless | Red | Blue | Yellow | Green | Orange | Black | Pink
-
-type city = string
-
-type route = {n0 : city; n2 : city; length : int; color : color; owner : player}
-
-
 module Board = sig
+
+	type player = NoPlayer | Player1 | Player2 | Player3 | Player4 | Player5
+	type color = Colorless | Red | Blue | Yellow | Green | Orange | Black | Pink
+	type city = string
+	type route = {n0 : city; n2 : city; length : int; color : color; owner : player}
 
 	module City = struct
 		type t = city
