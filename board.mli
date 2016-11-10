@@ -16,6 +16,8 @@ val add_city : city -> t -> t
 
 val add_route : route -> t -> t
 
+val construct : t
+
 val shortest_path : player -> city -> city -> t -> route list
 
 val has_connected : player -> city -> city -> t -> bool

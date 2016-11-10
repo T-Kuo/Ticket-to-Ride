@@ -1,11 +1,13 @@
+type state
 
-type playerTurn = Player1 | Player2 | Player3 | Player4 | Player5
+val human_player : Board.player -> bool
 
-type playerMove = DrawCard | DrawDeck | MakeTrack
+val player_hand : Board.player -> state -> Card.TrainCard.t list
 
-type playerHand
+val do_turn : state -> state
 
-type winner = Player1 | Player2 | Player3 | Player4 | Player5
+val score_player : Board.player -> state -> int
 
-type game_state = Start | Player1Turn | Player2Turn | Player3Turn | Player4Turn
-  | Player5Turn | EndGame
+val determine_winner : state -> Board.player
+
+val main : unit
