@@ -4,35 +4,42 @@ module type Card = sig
   (* the type of a Ticket to Ride card *)
 	type t
 	(* the type of a hand *)
-	type t hand
+	type hand
 	(* the type of a deck of cards *)
-	type t deck
+	type deck
 
   (* [new_deck] is a new deck of cards *)
-	val new_deck : t deck
-
-  (* draws a card from a deck *)
-	val draw : t deck ->  t
-
-  (* adds a card to a hand *)
-	val add_to_hand : t -> t hand -> t hand
-
-  (* removes a card from a hand *)
-	val remove_from_hand : t -> t hand -> t hand
+	val new_deck : deck
 
   (* checks if a deck of cards is empty *)
-	val is_empty : t deck -> bool
+	val is_empty : deck -> bool
+
+  (* draws a card from a deck *)
+	val draw : deck ->  t option * deck
+
+  (* adds a card to the discard pile *)
+	val discard : t -> deck -> deck
+
+  (* checks if a hand contains at least a card of the same type as t *)
+	val hand_contains : t -> hand -> bool
+
+  (* adds a card to a hand *)
+	val add_to_hand : t -> hand -> hand
+
+  (* removes a card from a hand *)
+	val remove_from_hand : t -> hand -> hand
 
   (* shuffles a deck of cards *)
-	val shuffle : t deck -> t deck
-
-  (* discards a card *)
-	val discard : t -> t deck -> t deck
+	val shuffle : deck -> deck
 
 end
 
 (* A [Card] implementation that manipulates the train cards in Ticket to Ride *)
-module TrainCard : Card
+module TrainCard : sig
+	include Card
+end
 
 (* A [Card] implementation that manipulates the ticket cards in Ticket to Ride *)
-module TicketCard : Card
+module TicketCard : sig
+	include Card
+end
