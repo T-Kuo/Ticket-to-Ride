@@ -123,6 +123,46 @@ end = struct
 end
 
 (* A [Card] implementation that manipulates the ticket cards in Ticket to Ride *)
-(*module TicketCard : Card = struct
+module TicketCard : sig 
+include Card
+end = struct
+	type t = Board.city * Board.city
 
-end*)
+	type hand = t list
+
+	type deck = {draw_pile : t list; discard_pile : t list}
+
+	let new_deck = let dp = [] (* TODO: add all of the TTR tickets *)
+		in
+		{draw_pile=dp;discard_pile=[]}
+
+	let is_empty d = List.length d.draw_pile = 0
+
+	let draw d = if is_empty d then (None,d)
+		else (Some (List.hd d.draw_pile),
+			{d with draw_pile=(List.tl d.draw_pile)})
+
+	let discard c d = {d with draw_pile=(c::d.discard_pile)}
+
+	let hand_contains c h = List.mem c h
+
+	let add_to_hand c h = c::h
+
+	let remove_from_hand c h = 
+		let rec rem  e l = match l with
+		|[] -> []
+		|h::t when h=e -> t
+		|h::t -> rem e t |> List.cons h (* not tail recursive, but only used on small lists *)
+		in
+		rem c h
+
+	let shuffle d = 
+		let () = Random.self_init ()
+		in
+		let (n,l) = List.rev_map (fun c -> (Random.int 400),c) d.discard_pile
+			|> List.fast_sort (fun (n0,c0) (n1,c1) -> compare n0 n1)
+			|> List.split
+		in
+		{draw_pile=l; discard_pile = []}
+
+end
