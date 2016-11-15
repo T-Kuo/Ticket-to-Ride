@@ -1,3 +1,5 @@
+open Color
+
 (* A [Card] has types and values for manipulating Ticket to Ride cards *)
 module type Card = sig
 
@@ -38,7 +40,7 @@ end
 module TrainCard : sig
 	include Card
 end = struct
-	type t = Rainbow | Red | Blue | Yellow | Green | Orange | Pink | White | Black
+	type t = color
 
 	type hand = {rainbow:int;red:int;blue:int;yellow:int;green:int;orange:int;pink:int;white:int;black:int}
 

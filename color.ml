@@ -1,0 +1,1 @@
+type color = Rainbow | Red | Blue | Yellow | Green | Orange | Pink | White | Black
