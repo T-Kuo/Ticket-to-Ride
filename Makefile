@@ -2,10 +2,10 @@ main:
 	ocamlbuild main.byte
 	
 test:
-	ocamlbuild test.byte && ./test.byte
+	ocamlbuild -pkgs oUnit test_main.byte && ./test_main.byte
 
 clean:
 	ocamlbuild -clean
 	
 zip:
-	zip a4src.zip *.ml{,i,y,l}
+	zip ttr.zip *.ml{,i,y,l}

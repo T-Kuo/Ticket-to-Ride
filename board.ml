@@ -1,19 +1,51 @@
 open Color
+open Player
 
-(* types needed to set up a Ticket to Ride board *)
-type player = None | Player1 | Player2 | Player3 | Player4 | Player5
-type city = {name : string; connections : city list}
-type route = {c1 : city; c2 : city; color : color; owner : player; length : int}
+type city = {name : string; connections : string list}
+type route = {c0 : city; c1 : city; color : color; owner : player; length : int}
 
 
 (* the type of a Ticket to Ride board *)
 type board = {cities : city list; routes : route list}
 
+
+let a = {name="a";connections=["b";"c"]}
+let b = {name="b";connections=["a";"c";"e"]}
+let c = {name="c";connections=["a";"b";"d"]}
+let d = {name="d";connections=["c";"e";]}
+let e = {name="e";connections=["b";"d"]}
+
+let ab = {c0=a;c1=b;color=Colorless;owner=None;length=4}
+let ac = {c0=a;c1=c;color=Colorless;owner=None;length=7}
+let bc = {c0=b;c1=c;color=Colorless;owner=None;length=3}
+let be = {c0=b;c1=e;color=Colorless;owner=None;length=3}
+let cd = {c0=c;c1=d;color=Colorless;owner=None;length=2}
+let de = {c0=d;c1=e;color=Colorless;owner=None;length=3}
+
 (* [empty] is the empty board *)
-let new_board = {cities=[];routes=[]} (* TODO: add the cities and routes *)
+let new_board = {cities=[a;b;c;d;e]; routes = [ab;ac;bc;be;cd;de]} (* TODO: add the cities and routes *)
 
 (* a list of routes between two cities on a board *)
-let routes_between c0 c1 b = failwith "unimplemented"
+let routes_between c0 c1 b = 
+	let rec rl c0 c1 i l =
+		match l with
+		|[] -> i
+		|h::t when h.c0=c0 && h.c1=c1 || h.c0=c1 && h.c1=c0 ->
+			rl c0 c1 (h::i) t
+		|h::t -> rl c0 c1 i t
+	in
+	rl c0 c1 [] b.routes 
+
+let routes_between_string s0 s1 b =
+	let rec rl c0 c1 i l =
+		match l with
+		|[] -> i
+		|h::t when h.c0.name=c0 && h.c1.name=c1 || h.c0.name=c1 && h.c1.name=c0 ->
+			rl c0 c1 (h::i) t
+		|h::t -> rl c0 c1 i t
+	in
+	rl s0 s1 [] b.routes 
+
 
 (* determines the shortest path needed to connect two cities on a board *)
 let shortest_path p c0 c1 b =
@@ -21,33 +53,38 @@ let shortest_path p c0 c1 b =
 		let rec update_connection w rn l ct =
 			match l with
 			|[] -> failwith "attempt to update nonexistent route"
-			|(cl,dl,rl)::t when cl = ct -> if w >= !dl then ()
-				else dl := w; rl := rn; ()			(*update distance/route, return list*)
-			|h::t -> update_connection w rn t ct
+			|(cl,dl,rl)::t when cl.name = ct -> (print_endline ((string_of_int w)^" "^(string_of_int !dl));  if w >= !dl then ()
+				else dl := w; rl := rn; ()		)	(*update distance/route, return list*)
+			|(cl,dl,rl)::t ->  update_connection w rn t ct
 		in
 		match cl with
 		|[] -> ()
-		|h::t -> let rb = routes_between c h b |> List.hd in
-if rb.owner = None then update_connection ((!d)+(List.length !r)) (rb::(!r)) l h
-			else if rb.owner = p then update_connection !d (rb::!r) l h
-			else if (List.length (routes_between c h b)) = 2 then
-				let rb2 = List.nth (routes_between c h b) 1 in
-				if rb2.owner = None then update_connection (!d+List.length !r) (rb2::!r) l h
-				else if rb2.owner = p then update_connection !d (rb2::!r) l h
+		|h::t -> let rb = routes_between_string c.name h b |> List.hd in
+			if rb.owner = None then (update_connection ((!d)+(rb.length)) (rb::(!r)) l h;
+				update_connections p (c,d,r) b l t)
+			else if rb.owner = p then (update_connection !d (rb::!r) l h;
+				update_connections p (c,d,r) b l t)
+			else if (List.length (routes_between_string c.name h b)) = 2 then
+				let rb2 = List.nth (routes_between_string c.name h b) 1 in
+				if rb2.owner = None then (update_connection (!d+rb.length) (rb2::!r) l h;
+				update_connections p (c,d,r) b l t)
+				else if rb2.owner = p then (update_connection !d (rb2::!r) l h;
+				update_connections p (c,d,r) b l t)
 				else ()
 			else ()
 	in
 	let rec step p c0 c1 b l =
 		let (c,d,r) = List.hd l 
 		in
-		if c=c1 then !r
+		print_endline (string_of_int !d); if c=c1 then !r
 		else (update_connections p (c,d,r) b l c.connections;
 			List.fast_sort (fun (c0,d0,r0) (c1,d1,r1) -> compare !d0 !d1) l
 			|>step p c0 c1 b)
 
 	in
-	step p c0 c1 b (List.map (fun c -> if c=c0 then (c, ref 0, ref [])
-		else (c, ref 50000000, ref [])) b.cities)
+	step p c0 c1 b ((List.map (fun x -> if x=c0 then (x, ref 1000000, ref [])
+		else (x, ref 50000000, ref [])) b.cities) |>
+			List.fast_sort (fun (c0,d0,r0) (c1,d1,r1) -> compare !d0 !d1))
 
 
 (* determines if a player controls a route between two cities on a

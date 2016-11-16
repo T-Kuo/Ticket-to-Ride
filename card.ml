@@ -87,6 +87,7 @@ end = struct
 		|Pink -> h.pink>0
 		|White -> h.white>0
 		|Black -> h.black>0
+		|Colorless -> false
 
 	let add_to_hand c h = 
 		match c with
@@ -99,6 +100,7 @@ end = struct
 		|Pink -> {h with pink = h.pink+1}
 		|White -> {h with white = h.white+1}
 		|Black -> {h with black = h.black+1}
+		|Colorless -> h
 
 	let remove_from_hand c h =
 		match c with
@@ -111,6 +113,7 @@ end = struct
 		|Pink -> {h with pink = h.pink-1}
 		|White -> {h with white = h.white-1}
 		|Black -> {h with black = h.black-1}
+		|Colorless -> h
 
   (* shuffles a deck of cards *)
 	let shuffle d = 

@@ -2,10 +2,7 @@ main:
 	ocamlbuild main.byte
 	
 test:
-	ocamlbuild test.byte && ./test.byte
-
-check:
-	bash checkenv.sh && bash checktypes.sh
+	ocamlbuild -pkgs oUnit test_main.byte && ./test_main.byte
 
 clean:
 	ocamlbuild -clean

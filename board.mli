@@ -1,10 +1,20 @@
+open Player
+
 (* types needed to set up a Ticket to Ride board *)
-type player
 type city
 type route
 
 (* the type of a Ticket to Ride board *)
 type board
+
+
+val a : city
+val b : city
+val c : city
+val d : city
+val e : city
+
+val ab : route
 
 (* [new_board] is the game board with all routes unclaimed *)
 val new_board : board
