@@ -15,6 +15,11 @@ val d : city
 val e : city
 
 val ab : route
+val ac : route
+val bc : route
+val be : route
+val cd : route
+val de : route
 
 (* [new_board] is the game board with all routes unclaimed *)
 val new_board : board
@@ -23,7 +28,7 @@ val new_board : board
 val routes_between : city -> city -> board -> route list
 
 (* determines the shortest path needed to connect two cities on a board *)
-val shortest_path : player -> city -> city -> board -> route list
+val shortest_path : player -> city -> city -> board -> int * route list
 
 (* determines if a player controls a route between two cities on a
  * board *)

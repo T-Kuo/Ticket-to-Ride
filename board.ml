@@ -52,9 +52,9 @@ let shortest_path p c0 c1 b =
 	let rec update_connections p (c,d,r) b l cl =
 		let rec update_connection w rn l ct =
 			match l with
-			|[] -> failwith "attempt to update nonexistent route"
-			|(cl,dl,rl)::t when cl.name = ct -> (print_endline ((string_of_int w)^" "^(string_of_int !dl));  if w >= !dl then ()
-				else dl := w; rl := rn; ()		)	(*update distance/route, return list*)
+			|[] -> ()
+			|(cl,dl,rl)::t when cl.name = ct -> if w >= !dl then ()
+				else (dl := w; rl := rn); ()			(*update distance/route, return list*)
 			|(cl,dl,rl)::t ->  update_connection w rn t ct
 		in
 		match cl with
@@ -66,7 +66,7 @@ let shortest_path p c0 c1 b =
 				update_connections p (c,d,r) b l t)
 			else if (List.length (routes_between_string c.name h b)) = 2 then
 				let rb2 = List.nth (routes_between_string c.name h b) 1 in
-				if rb2.owner = None then (update_connection (!d+rb.length) (rb2::!r) l h;
+				if rb2.owner = None then (update_connection (!d+rb2.length) (rb2::!r) l h;
 				update_connections p (c,d,r) b l t)
 				else if rb2.owner = p then (update_connection !d (rb2::!r) l h;
 				update_connections p (c,d,r) b l t)
@@ -76,15 +76,17 @@ let shortest_path p c0 c1 b =
 	let rec step p c0 c1 b l =
 		let (c,d,r) = List.hd l 
 		in
-		print_endline (string_of_int !d); if c=c1 then !r
+		if c=c1 then (!d,!r)
 		else (update_connections p (c,d,r) b l c.connections;
-			List.fast_sort (fun (c0,d0,r0) (c1,d1,r1) -> compare !d0 !d1) l
+			List.fast_sort (fun (c0,d0,r0) (c1,d1,r1) -> compare !d0 !d1) (List.tl l)
 			|>step p c0 c1 b)
 
 	in
-	step p c0 c1 b ((List.map (fun x -> if x=c0 then (x, ref 1000000, ref [])
+	step p c0 c1 b ((List.map (fun x -> if x=c0 then (x, ref 0, ref [])
 		else (x, ref 50000000, ref [])) b.cities) |>
-			List.fast_sort (fun (c0,d0,r0) (c1,d1,r1) -> compare !d0 !d1))
+			List.fast_sort (fun (c0,d0,r0) (c1,d1,r1) ->
+				let c = compare !d0 !d1 in if c <> 0 then c else
+					compare (List.length !r0) (List.length !r1)))
 
 
 (* determines if a player controls a route between two cities on a
