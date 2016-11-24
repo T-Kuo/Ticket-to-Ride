@@ -19,5 +19,16 @@ let tests = [
 	(9,[cd;ac])
 		(shortest_path Player1 a d new_board));
 
+"has_connected1" >:: (fun _ -> assert_equal false
+  (has_connected Player1 a b new_board));
+
+"claim_route1" >:: (fun _ -> assert_equal true
+  (claim_route Player1 ab new_board |> fst));
+
+"has_connected2" >:: (fun _ -> assert_equal true
+  (claim_route Player1 ab new_board |> snd |> has_connected Player1 a b));
+
+"claim_route2" >:: (fun _ -> assert_equal false
+  (claim_route Player1 ab new_board |> snd |> claim_route Player2 ab |> fst));
 
 ]

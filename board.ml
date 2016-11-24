@@ -2,7 +2,7 @@ open Color
 open Player
 
 type city = {name : string; connections : string list}
-type route = {c0 : city; c1 : city; color : color; owner : player; length : int}
+type route = {c0 : city; c1 : city; color : color; mutable owner : player; length : int}
 
 
 (* the type of a Ticket to Ride board *)
@@ -26,7 +26,7 @@ let de = {c0=d;c1=e;color=Colorless;owner=None;length=3}
 let new_board = {cities=[a;b;c;d;e]; routes = [ab;ac;bc;be;cd;de]} (* TODO: add the cities and routes *)
 
 (* a list of routes between two cities on a board *)
-let routes_between c0 c1 b = 
+let routes_between c0 c1 b =
 	let rec rl c0 c1 i l =
 		match l with
 		|[] -> i
@@ -34,7 +34,7 @@ let routes_between c0 c1 b =
 			rl c0 c1 (h::i) t
 		|h::t -> rl c0 c1 i t
 	in
-	rl c0 c1 [] b.routes 
+	rl c0 c1 [] b.routes
 
 let routes_between_string s0 s1 b =
 	let rec rl c0 c1 i l =
@@ -44,7 +44,7 @@ let routes_between_string s0 s1 b =
 			rl c0 c1 (h::i) t
 		|h::t -> rl c0 c1 i t
 	in
-	rl s0 s1 [] b.routes 
+	rl s0 s1 [] b.routes
 
 
 (* determines the shortest path needed to connect two cities on a board *)
@@ -74,7 +74,7 @@ let shortest_path p c0 c1 b =
 			else ()
 	in
 	let rec step p c0 c1 b l =
-		let (c,d,r) = List.hd l 
+		let (c,d,r) = List.hd l
 		in
 		if c=c1 then (!d,!r)
 		else (update_connections p (c,d,r) b l c.connections;
@@ -88,12 +88,28 @@ let shortest_path p c0 c1 b =
 				let c = compare !d0 !d1 in if c <> 0 then c else
 					compare (List.length !r0) (List.length !r1)))
 
+(* [owns_route p routes] is true if the player [p] owns a route in the route
+ * list [routes], otherwise [owns_route p routes] is false. *)
+let rec owns_route p routes =
+  match routes with
+  | [] -> false
+  | h::t -> if h.owner = p then true else owns_route p t
 
 (* determines if a player controls a route between two cities on a
  * board *)
-let has_connected p c0 c1 b = failwith "unimplemented"
+let has_connected p c0 c1 b =
+  let connections = routes_between c0 c1 b in
+  owns_route p connections
 
 (* attempts to claim a route on a board *)
-let claim_route p r = failwith "unimplemented"
+let claim_route p r b =
+  if List.mem r b.routes then
+    if r.owner = None then
+      let _ = r.owner <- p in
+      (true, b)
+    else
+      (false, b)
+  else
+    failwith "Route is not on the board"
 
 
