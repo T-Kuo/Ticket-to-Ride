@@ -25,6 +25,8 @@ let de = {c0=d;c1=e;color=Colorless;owner=None;length=3}
 (* [empty] is the empty board *)
 let new_board = {cities=[a;b;c;d;e]; routes = [ab;ac;bc;be;cd;de]} (* TODO: add the cities and routes *)
 
+let new_board1 () = {cities=[a;b;c;d;e]; routes = [ab;ac;bc;be;cd;de]}
+
 (* a list of routes between two cities on a board *)
 let routes_between c0 c1 b =
 	let rec rl c0 c1 i l =
@@ -88,6 +90,13 @@ let shortest_path p c0 c1 b =
 				let c = compare !d0 !d1 in if c <> 0 then c else
 					compare (List.length !r0) (List.length !r1)))
 
+let rec print_list_string2 (lst: string list)  = match lst with
+| [] -> print_endline "This is the end of the list"
+| head::body ->
+begin
+print_endline head;
+print_list_string2 body
+end
 
 (* [dfs p c0 c1 b visited connections] traverses the board [b] and returns true
  * if the player [p] owns a path on the board [b] from the city [c0] to the city
@@ -95,7 +104,7 @@ let shortest_path p c0 c1 b =
  * Preconditions: [visited] is the list of names of cities that have already
  * been visited in the traversal, [connections] is the list of names of
  * unvisited cities that are one route away from the city [c0] *)
-let rec dfs p c0 c1 b visited connections =
+let rec dfs p c0 c1 b (visited: string list ref) connections =
   match connections with
   | [] -> false
   | h::t when h = c1.name -> (let route = List.find (fun r -> r.c0 = c0 &&
@@ -106,18 +115,21 @@ let rec dfs p c0 c1 b visited connections =
   | h::t -> (let city = List.find (fun c -> c.name = h) b.cities in
             let route = List.find (fun r -> c0 = c0 &&  c1 = c1 ||
                         c0 = c1 && c1 = c0) b.routes in
-            let visited2 = h::visited in
-            let cities = List.filter (fun c -> not (List.mem c visited2))
-                         city.connections in
+            let _ = if not (List.exists (fun x -> x = h) !visited) then
+                      visited := h::!visited
+                    else
+                      () in
+            let cities = List.filter (fun c -> not (List.exists (fun x -> x = c)
+                                               !visited)) city.connections in
             if route.owner = p then
-              dfs p city c1 b visited2 cities ||  dfs p c0 c1 b visited2 t
+              dfs p city c1 b visited cities ||  dfs p c0 c1 b visited t
             else
-              dfs p c0 c1 b visited2 t)
+              dfs p c0 c1 b visited t)
 
 (* determines if a player controls a route between two cities on a
  * board *)
 let has_connected p c0 c1 b =
-  dfs p c0 c1 b [c0.name] c0.connections
+  dfs p c0 c1 b (ref [c0.name]) c0.connections
 
 (* attempts to claim a route on a board *)
 let claim_route p r b =
