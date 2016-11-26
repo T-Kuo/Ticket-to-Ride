@@ -25,8 +25,6 @@ let de = {c0=d;c1=e;color=Colorless;owner=None;length=3}
 (* [empty] is the empty board *)
 let new_board = {cities=[a;b;c;d;e]; routes = [ab;ac;bc;be;cd;de]} (* TODO: add the cities and routes *)
 
-let new_board1 () = {cities=[a;b;c;d;e]; routes = [ab;ac;bc;be;cd;de]}
-
 (* a list of routes between two cities on a board *)
 let routes_between c0 c1 b =
 	let rec rl c0 c1 i l =
@@ -89,14 +87,6 @@ let shortest_path p c0 c1 b =
 			List.fast_sort (fun (c0,d0,r0) (c1,d1,r1) ->
 				let c = compare !d0 !d1 in if c <> 0 then c else
 					compare (List.length !r0) (List.length !r1)))
-
-let rec print_list_string2 (lst: string list)  = match lst with
-| [] -> print_endline "This is the end of the list"
-| head::body ->
-begin
-print_endline head;
-print_list_string2 body
-end
 
 (* [dfs p c0 c1 b visited connections] traverses the board [b] and returns true
  * if the player [p] owns a path on the board [b] from the city [c0] to the city

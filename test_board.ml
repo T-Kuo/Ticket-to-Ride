@@ -20,31 +20,31 @@ let tests = [
 		(shortest_path Player1 a d new_board));
 
 "has_connected1" >:: (fun _ -> assert_equal false
-  (has_connected Player1 a b (new_board1 ()) ));
+  (has_connected Player1 a b new_board));
 
 "claim_route1" >:: (fun _ -> assert_equal true
-  (claim_route Player1 ab (new_board1 ()) |> fst));
+  (claim_route Player1 ab new_board |> fst));
 
 "has_connected2" >:: (fun _ -> assert_equal true
-  (claim_route Player1 ab (new_board1 ()) |> snd |> has_connected Player1 a b));
+  (claim_route Player1 ab new_board |> snd |> has_connected Player1 a b));
 
 "claim_route2" >:: (fun _ -> assert_equal false
-  (claim_route Player1 ab (new_board1 ()) |> snd |> claim_route Player2 ab |> fst));
+  (claim_route Player1 ab new_board |> snd |> claim_route Player2 ab |> fst));
 
 "has_connected3" >:: (fun _ -> assert_equal true
-  (claim_route Player1 ab (new_board1 ()) |> snd |> claim_route Player1 bc |> snd
+  (claim_route Player1 ab new_board |> snd |> claim_route Player1 bc |> snd
    |> has_connected Player1 a c));
 
 "has_connected4" >:: (fun _ -> assert_equal false
- (claim_route Player1 ab (new_board1 ()) |> snd |> claim_route Player1 bc |> snd
+ (claim_route Player1 ab new_board |> snd |> claim_route Player1 bc |> snd
   |> has_connected Player1 a d));
 
 "has_connected5" >:: (fun _ -> assert_equal true
- (claim_route Player1 ab (new_board1 ()) |> snd |> claim_route Player1 bc |> snd
+ (claim_route Player1 ab new_board |> snd |> claim_route Player1 bc |> snd
   |> claim_route Player1 cd |> snd |> claim_route Player1 de |> snd
   |> has_connected Player1 a e));
 
 "has_connected6" >:: (fun _ -> assert_equal false    (* strange case *)
-  (claim_route Player1 ab (new_board1 ()) |> snd |> claim_route Player1 bc |> snd
+  (claim_route Player1 ab new_board |> snd |> claim_route Player1 bc |> snd
   |> claim_route Player1 cd |> snd |> has_connected Player1 a e));
 ]
