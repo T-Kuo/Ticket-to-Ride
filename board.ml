@@ -88,18 +88,36 @@ let shortest_path p c0 c1 b =
 				let c = compare !d0 !d1 in if c <> 0 then c else
 					compare (List.length !r0) (List.length !r1)))
 
-(* [owns_route p routes] is true if the player [p] owns a route in the route
- * list [routes], otherwise [owns_route p routes] is false. *)
-let rec owns_route p routes =
-  match routes with
+
+(* [dfs p c0 c1 b visited connections] traverses the board [b] and returns true
+ * if the player [p] owns a path on the board [b] from the city [c0] to the city
+ * [c1], otherwise, [dfs p c0 c1 b visited connections] returns false.
+ * Preconditions: [visited] is the list of names of cities that have already
+ * been visited in the traversal, [connections] is the list of names of
+ * unvisited cities that are one route away from the city [c0] *)
+let rec dfs p c0 c1 b visited connections =
+  match connections with
   | [] -> false
-  | h::t -> if h.owner = p then true else owns_route p t
+  | h::t when h = c1.name -> (let route = List.find (fun r -> r.c0 = c0 &&
+                                         r.c1 = c1 || r.c0 = c1 && r.c1 = c0)
+                                         b.routes in
+                             if route.owner = p then true
+                             else false)
+  | h::t -> (let city = List.find (fun c -> c.name = h) b.cities in
+            let route = List.find (fun r -> c0 = c0 &&  c1 = c1 ||
+                        c0 = c1 && c1 = c0) b.routes in
+            let visited2 = h::visited in
+            let cities = List.filter (fun c -> not (List.mem c visited2))
+                         city.connections in
+            if route.owner = p then
+              dfs p city c1 b visited2 cities ||  dfs p c0 c1 b visited2 t
+            else
+              dfs p c0 c1 b visited2 t)
 
 (* determines if a player controls a route between two cities on a
  * board *)
 let has_connected p c0 c1 b =
-  let connections = routes_between c0 c1 b in
-  owns_route p connections
+  dfs p c0 c1 b [c0.name] c0.connections
 
 (* attempts to claim a route on a board *)
 let claim_route p r b =
