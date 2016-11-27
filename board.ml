@@ -2,7 +2,7 @@ open Color
 open Player
 
 type city = {name : string; connections : string list}
-type route = {c0 : city; c1 : city; color : color; mutable owner : player; length : int}
+type route = {c0 : city; c1 : city; color : color; owner : player; length : int}
 
 
 (* the type of a Ticket to Ride board *)
@@ -125,8 +125,9 @@ let has_connected p c0 c1 b =
 let claim_route p r b =
   if List.mem r b.routes then
     if r.owner = None then
-      let _ = r.owner <- p in
-      (true, b)
+      let r1 = {r with owner = p} in
+      let routes1 = List.filter (fun x -> x.c0<>r.c0 || x.c1<>r.c1) b.routes in
+      (true, {b with routes = r1::routes1})
     else
       (false, b)
   else

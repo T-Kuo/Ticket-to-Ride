@@ -29,7 +29,8 @@ let tests = [
   (claim_route Player1 ab new_board |> snd |> has_connected Player1 a b));
 
 "claim_route2" >:: (fun _ -> assert_equal false
-  (claim_route Player1 ab new_board |> snd |> claim_route Player2 ab |> fst));
+  (claim_route Player1 ab new_board |> snd |> claim_route Player2 {ab with
+   owner = Player1} |> fst));
 
 "has_connected3" >:: (fun _ -> assert_equal true
   (claim_route Player1 ab new_board |> snd |> claim_route Player1 bc |> snd
