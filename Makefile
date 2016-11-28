@@ -8,4 +8,4 @@ clean:
 	ocamlbuild -clean
 	
 zip:
-	zip ttr.zip *.ml{,i,y,l}
+	zip ttr	.zip *.ml{,i,y,l}
