@@ -1,8 +1,9 @@
 open Player
+open Color
 
 (* types needed to set up a Ticket to Ride board *)
 type city
-type route
+type route = {c0 : city; c1 : city; color : color; owner : player; length : int}
 
 (* the type of a Ticket to Ride board *)
 type board
