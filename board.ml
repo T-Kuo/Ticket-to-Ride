@@ -181,7 +181,7 @@ let new_board = {cities=[a;b;c;d;e;f;g;h;i;j;k;l;m;n;o;p;q;r;s;t;u;v;w;x;y;z;
   de1;de2;dg;ef1;ef2;eg1;eg2;fi;fj;fl;ig;gm1;gm2;gh;jm;jk;jl;lk;km;ch;cn;hn;ho;
   hq;hm;mq;mr1;mr2;mp;kp;lp;ls;lt;ts1;ts2;tv;sp1;sp2;su;pr1;pr2;pu;ry1;ry2;rq1;
   rq2;qo1;qo2;qx;nw;no;ow;oz;ox;xz;xc_11;xc_12;xy1;xy2;yu;ya_1;yc_1;ua_1;vu;
-  vb_11;vb_12;vf_1;;f_1b_1;f_1e_1;e_1b_1;e_1d_1;d_1b_11;d_1b_12;d_1a_1;d_1c_1;
+  vb_11;vb_12;vf_1;f_1b_1;f_1e_1;e_1b_1;e_1d_1;d_1b_11;d_1b_12;d_1a_1;d_1c_1;
   d_1g_11;d_1g_12;b_1a_1; a_1c_1;c_1z;c_1g_1;c_1h_11;c_1h_12;wz;wj_1;g_1h_11;
   g_1h_12;h_1i_11;h_1i_12;j_1i_11;j_1i_12;j_1h_1;j_1z]}
 

@@ -2,25 +2,12 @@ open Player
 open Color
 
 (* types needed to set up a Ticket to Ride board *)
-type city
+type city = {name : string; connections : string list}
 type route = {c0 : city; c1 : city; color : color; owner : player; length : int}
 
 (* the type of a Ticket to Ride board *)
-type board
+type board = {cities : city list; routes : route list}
 
-
-val a : city
-val b : city
-val c : city
-val d : city
-val e : city
-
-val ab : route
-val ac : route
-val bc : route
-val be : route
-val cd : route
-val de : route
 
 (* [new_board] is the game board with all routes unclaimed *)
 val new_board : board

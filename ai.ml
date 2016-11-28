@@ -9,15 +9,15 @@ let rec remove_dups l = match l with
 
 let determine_best_route p rl b = 
 	let (seperatel,seperater) = 
-		(List.map (fun r -> shortest_path p (get_c0 r) (get_c1 r) b) rl) |>
+		(List.map (fun r -> shortest_path p (r.c0) (r.c1) b) rl) |>
 List.fold_left (fun (tot,rtot) (l,rs) -> (tot+l,(rs @ rtot))) (0,[])
 	in
 	let routes_to_hub p b h c0 c1 = 
 		let (c0d,c0r) = (shortest_path p h c0 b) in let (c1d,c1r) = (shortest_path p h c1 b) in
 		(c0d+c1d,c0r @ c1r) in
 	let (hubl,hubr) = 
-		let hub_list = List.map (fun c -> (List.map (fun r -> routes_to_hub p b c (get_c0 r) (get_c1 r)) rl
-			|> List.fold_left (fun (it,rst) (i,rs) -> (i+it,rs @ rst)) (0,[]))) (get_cities b) in
+		let hub_list = List.map (fun c -> (List.map (fun r -> routes_to_hub p b c (r.c0) (r.c1)) rl
+			|> List.fold_left (fun (it,rst) (i,rs) -> (i+it,rs @ rst)) (0,[]))) (b.cities) in
 		let rec hub_min (ml,mr) = function
 			|[] -> (ml,mr)
 			|(hl,hr)::t -> if hl<ml then hub_min (hl,hr) t else hub_min (ml,mr) t in

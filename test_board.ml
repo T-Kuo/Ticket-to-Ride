@@ -7,7 +7,8 @@ open Player
 
 let tests = [
 
-"basic" >:: (fun _ -> assert_equal
+(* TODO update with actual TtR cities *)
+(*"basic" >:: (fun _ -> assert_equal
 	(4,[ab])
 		(shortest_path Player1 a b new_board));
 
@@ -47,5 +48,5 @@ let tests = [
 
 "has_connected6" >:: (fun _ -> assert_equal false    (* strange case *)
   (claim_route Player1 ab new_board |> snd |> claim_route Player1 bc |> snd
-  |> claim_route Player1 cd |> snd |> has_connected Player1 a e));
+  |> claim_route Player1 cd |> snd |> has_connected Player1 a e));*)
 ]
