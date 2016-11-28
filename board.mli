@@ -8,6 +8,8 @@ type route = {c0 : city; c1 : city; color : color; owner : player; length : int}
 (* the type of a Ticket to Ride board *)
 type board = {cities : city list; routes : route list}
 
+(* TODO add the cities and routes so they can be referenced in other modules *)
+val a : city
 
 (* [new_board] is the game board with all routes unclaimed *)
 val new_board : board

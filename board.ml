@@ -233,16 +233,17 @@ let shortest_path p c0 c1 b =
 				else ()
 			else ()
 	in
-	let rec step p c0 c1 b l =
+	let rec step p c0 c1 b col dol rol l=
 		let (c,d,r) = List.hd l
 		in
-		if c=c1 then (!d,!r)
+		if (c,!d,!r) = (col,dol,rol) then (0,[])
+		else if c=c1 then (!d,!r)
 		else (update_connections p (c,d,r) b l c.connections;
 			List.fast_sort (fun (c0,d0,r0) (c1,d1,r1) -> compare !d0 !d1) (List.tl l)
-			|>step p c0 c1 b)
+			|>step p c0 c1 b c !d !r)
 
 	in
-	step p c0 c1 b ((List.map (fun x -> if x=c0 then (x, ref 0, ref [])
+	step p c0 c1 b a 100000000 [] ((List.map (fun x -> if x=c0 then (x, ref 0, ref [])
 		else (x, ref 50000000, ref [])) b.cities) |>
 			List.fast_sort (fun (c0,d0,r0) (c1,d1,r1) ->
 				let c = compare !d0 !d1 in if c <> 0 then c else
