@@ -1,5 +1,8 @@
 (* the type of a state of a Ticket to Ride game *)
-type state
+type player_state = {pid : Player.player; ptype : Player.player_type; color : Color.color;
+	train_hand : TrainCard.hand; ticket_hand : TicketCard.hand; trains_left : int; score : int}
+type state = {board: Board.board;train_deck : TrainCard.deck; ticket_deck : TicketCard.deck;
+	player_info : player_state list}
 
 (* checks if a player is a human player *)
 val human_player : Board.player -> bool
