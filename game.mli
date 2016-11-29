@@ -5,18 +5,18 @@ type state = {board: Board.board;train_deck : TrainCard.deck; ticket_deck : Tick
 	player_info : player_state list}
 
 (* checks if a player is a human player *)
-val human_player : Board.player -> bool
+val human_player : Player.player -> bool
 
 (* the hand of a player in a given state of the game *)
-val player_hand : Board.player -> state -> Card.TrainCard.t list
+val player_hand : Player.player -> state -> Card.TrainCard.hand
 
 (* the state of the game after a turn is taken *)
 val do_turn : state -> state
 
 (* the score of a player in a given state of the game *)
-val score_player : Board.player -> state -> int
+val score_player : Player.player -> state -> int
 
 (* the winner of the game in a given game state *)
-val determine_winner : state -> Board.player
+val determine_winner : state -> Player.player
 
 val main : unit

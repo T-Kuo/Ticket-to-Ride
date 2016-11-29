@@ -1,2 +1,2 @@
 (* performs a turn *)
-val do_turn : Board.t -> Board.player -> TicketCard.t hand -> TrainCard.t hand -> TrainCard.t list -> int -> bool -> Action.t
+val do_turn : Board.board -> Player.player -> TicketCard.hand -> TrainCard.hand -> TrainCard.t list -> int -> bool -> Action.action
