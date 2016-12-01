@@ -1,6 +1,8 @@
 open Action
 open Board
 open Card
+open Card.TrainCard
+open Card.TicketCard
 open Color
 
 let rec remove_dups l = match l with
@@ -22,7 +24,6 @@ List.fold_left (fun (tot,rtot) (l,rs) -> (tot+l,(rs @ rtot))) (0,[])
 			|[] -> (ml,mr)
 			|(hl,hr)::t -> if hl<ml then hub_min (hl,hr) t else hub_min (ml,mr) t in
 		hub_min (5000000,[]) hub_list in
-	let route_length rs = List.fold_left (fun tot (l,r) -> tot+l) 0 rs in
 if (seperatel < hubl) then (seperater |> remove_dups) else (hubr |> remove_dups)
 
 let do_turn b tkh (trh:TrainCard.hand) fup p ad = 
@@ -38,7 +39,16 @@ let routes_to_complete = determine_best_route p dest_cities b in
 	|Pink -> (trh.pink+trh.rainbow >= curr_route.length, Pink)
 	|White -> (trh.white+trh.rainbow >= curr_route.length, White)
 	|Black -> (trh.black+trh.rainbow >= curr_route.length, Black)
-	|Colorless -> (false,Colorless) (*TODO*)
+	|Colorless -> 
+		let comp (c0,n0) (c1,n1) = if n0>=curr_route.length then (if n1<curr_route.length then (c0,n0)
+else if n0<=n1 then (c0,n0) else (c1,n1)) else if n1>=curr_route.length then (c1,n1)
+				else if n0>n1 then (c0,n0) else (c1,n1) in
+		let (col,quant) = comp (Red,trh.red) (Blue,trh.blue) |> comp (Yellow,trh.yellow)
+			|> comp (Green,trh.green) |> comp (Orange,trh.orange) |> comp (Pink,trh.pink)
+			|> comp (White,trh.white) |> comp (Black,trh.black) in
+		(quant >= curr_route.length, col)
+
+	|Rainbow -> failwith "Rainbow routes don't exist, silly."
 	in
 	match completable with
 	|true,c -> (ClaimRoute(curr_route,c))
@@ -49,3 +59,4 @@ let rec cind c n l = match l with |[] -> -1 |h::t -> if c=h then n else (cind c 
 		| n -> DrawFaceUp(n)
 	)
 
+let choose_tickets tks min = tks
