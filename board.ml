@@ -185,6 +185,17 @@ let new_board = {cities=[a;b;c;d;e;f;g;h;i;j;k;l;m;n;o;p;q;r;s;t;u;v;w;x;y;z;
   d_1g_11;d_1g_12;b_1a_1; a_1c_1;c_1z;c_1g_1;c_1h_11;c_1h_12;wz;wj_1;g_1h_11;
   g_1h_12;h_1i_11;h_1i_12;j_1i_11;j_1i_12;j_1h_1;j_1z]}
 
+(* Helper function of [cnames_list ()]:
+ * Retrieves string names of all cities and returns as a list *)
+let rec get_names clist =
+   match clist with
+   | [] -> []
+   | h::t -> h.name::(get_names t)
+
+(* Returns list of string names of all cities on board *)
+let cnames_list () =
+  get_names (new_board.cities)
+
 (* a list of routes between two cities on a board *)
 let routes_between c0 c1 b =
 	let rec rl c0 c1 i l =
