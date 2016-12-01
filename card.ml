@@ -1,50 +1,13 @@
 open Color
 
-(* A [Card] has types and values for manipulating Ticket to Ride cards *)
-module type Card = sig
-
-  (* the type of a Ticket to Ride card *)
-	type t
-	(* the type of a hand *)
-	type hand
-	(* the type of a deck of cards *)
-	type deck
-
-  (* [new_deck] is a new deck of cards *)
-	val new_deck : deck
-
-  (* checks if a deck of cards is empty *)
-	val is_empty : deck -> bool
-
-  (* draws a card from a deck *)
-	val draw : deck ->  t option * deck
-
-  (* adds a card to the discard pile *)
-	val discard : t -> deck -> deck
-
-  (* checks if a hand contains at least a card of the same type as t *)
-	val hand_contains : t -> hand -> bool
-
-  (* adds a card to a hand *)
-	val add_to_hand : t -> hand -> hand
-
-  (* removes a card from a hand *)
-	val remove_from_hand : t -> hand -> hand
-
-  (* shuffles a deck of cards *)
-	val shuffle : deck -> deck
-
-end
-
 (* A [Card] implementation that manipulates the train cards in Ticket to Ride *)
-module TrainCard : sig
-	include Card
-end = struct
+module TrainCard = struct
 	type t = color
 
-	type hand = {rainbow:int;red:int;blue:int;yellow:int;green:int;orange:int;pink:int;white:int;black:int}
+	type hand = {rainbow:int;red:int;blue:int;yellow:int;green:int;orange:int;
+		pink:int;white:int;black:int}
 
-	type deck = {draw_pile: t list; discard_pile: t list}
+	type deck = {draw_pile: t list; discard_pile: t list; faceup : t list}
 
 	let new_deck = 
 		let () = Random.self_init ()
@@ -63,7 +26,10 @@ end = struct
 		|> add_cards Black 12
 		|> List.fast_sort (fun (n0,c1) (n1,c1) -> compare n0 n1)
 		|> List.split
-		in {draw_pile=l; discard_pile=[]}
+		in {draw_pile=l; discard_pile=[];faceup=[]}
+
+	let empty_hand = {rainbow=0;red=0;blue=0;yellow=0;green=0;orange=0;
+		pink=0;white=0;black=0}
 
 	let is_empty d = 
 		List.length d.draw_pile = 0
@@ -123,23 +89,32 @@ end = struct
 			|> List.fast_sort (fun (n0,c0) (n1,c1) -> compare n0 n1)
 			|> List.split
 		in
-		{draw_pile=l; discard_pile = []}
+		{draw_pile=l; discard_pile = []; faceup=[]}
+
+	let difference a b =
+		let x = {rainbow=0;red=a.red-b.red;blue=a.blue-b.blue;yellow=a.yellow-b.yellow;
+		green=a.green-b.green;orange=a.orange-b.orange;pink=a.pink-b.pink;
+		white=a.white-b.white;black=a.black-b.black} in
+		{x with rainbow=a.rainbow-(x.red+x.blue+x.yellow+x.green+x.orange+x.pink+x.white+x.black)}
 
 end
 
 (* A [Card] implementation that manipulates the ticket cards in Ticket to Ride *)
-module TicketCard : sig 
-include Card
-end = struct
-	type t = Board.city * Board.city
-
+module TicketCard = struct
+	type t = {c0 : Board.city; c1 : Board.city; points : int}
 	type hand = t list
 
 	type deck = {draw_pile : t list; discard_pile : t list}
 
+	let to_pair t = (t.c0,t.c1)
+
+	let to_list h = List.map to_pair h
+
 	let new_deck = let dp = [] (* TODO: add all of the TTR tickets *)
 		in
 		{draw_pile=dp;discard_pile=[]}
+
+	let empty_hand = []
 
 	let is_empty d = List.length d.draw_pile = 0
 
@@ -170,4 +145,6 @@ end = struct
 		in
 		{draw_pile=l; discard_pile = []}
 
+	let to_pair c =  c.c0,c.c1
+	
 end
