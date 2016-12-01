@@ -3,8 +3,8 @@ type player_state = {
   pid : Player.player;
   ptype : Player.player_type;
   color : Color.color;
-	train_hand : TrainCard.hand;
-  ticket_hand : TicketCard.hand;
+	train_hand : Card.TrainCard.hand;
+  ticket_hand : Card.TicketCard.hand;
   trains_left : int;
   score : int
   }
@@ -12,8 +12,8 @@ type player_state = {
 (* The player who's turn it is is the first player in player_info *)
 type state = {
   board: Board.board;
-  train_deck : TrainCard.deck;
-  ticket_deck : TicketCard.deck;
+  train_deck : Card.TrainCard.deck;
+  ticket_deck : Card.TicketCard.deck;
 	player_info : player_state list
   }
 
