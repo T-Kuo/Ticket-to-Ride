@@ -14,6 +14,10 @@ val a : city
 (* [new_board] is the game board with all routes unclaimed *)
 val new_board : board
 
+(* [cnames_list ()] generates a string list of all city names found on the
+ * board *)
+val cnames_list : unit -> string list
+
 (* the list of routes between two cities on a board *)
 val routes_between : city -> city -> board -> route list
 
