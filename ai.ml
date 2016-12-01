@@ -25,7 +25,7 @@ List.fold_left (fun (tot,rtot) (l,rs) -> (tot+l,(rs @ rtot))) (0,[])
 	let route_length rs = List.fold_left (fun tot (l,r) -> tot+l) 0 rs in
 if (seperatel < hubl) then (seperater |> remove_dups) else (hubr |> remove_dups)
 
-let do_turn b tkh (trh:TrainCard.hand) fup p = 
+let do_turn b tkh (trh:TrainCard.hand) fup p ad = 
 	let dest_cities = List.fold_left (fun l tk -> match tk with (c0,c1) -> (c0,c1)::l) [] (TicketCard.to_list tkh) |> remove_dups in
 let routes_to_complete = determine_best_route p dest_cities b in
 	let curr_route = List.hd routes_to_complete in
@@ -39,7 +39,13 @@ let routes_to_complete = determine_best_route p dest_cities b in
 	|White -> (trh.white+trh.rainbow >= curr_route.length, White)
 	|Black -> (trh.black+trh.rainbow >= curr_route.length, Black)
 	|Colorless -> (false,Colorless) (*TODO*)
-
 	in
-	failwith "unimplemented"
+	match completable with
+	|true,c -> (ClaimRoute(curr_route,c))
+	|false,c -> (
+let rec cind c n l = match l with |[] -> -1 |h::t -> if c=h then n else (cind c (n+1) t) in
+		match cind c 0 fup with
+		| -1 -> (match cind Rainbow 0 fup with |n when n > -1 && ad=false -> DrawFaceUp(n) |_ -> DrawDeck)
+		| n -> DrawFaceUp(n)
+	)
 
