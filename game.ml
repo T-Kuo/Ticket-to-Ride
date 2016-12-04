@@ -111,7 +111,7 @@ and execute_turn state action num =
         train_deck = nd;
         player_info = np::(List.tl state.player_info)} in
         do_turn2 ns)
-      
+
     | DrawDeck ->
       let pl = List.hd state.player_info in
       let cd = List.hd state.train_deck.draw_pile in
@@ -211,10 +211,10 @@ let determine_winner state =
 
   help None 0 state
 
-let main =
+let main num =
   (*Ask for user input, number of human players. Rest will be AI.
    * min 1 human player, max 5. There are 5 players per game.*)
-  let humans = ref 5 in
+  let humans = ref num in
   let pl1 = { pid = Player1;
               ptype = if !humans = 0 then AI else (humans := (!humans -1); Human);
               color = Red;
