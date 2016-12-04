@@ -275,8 +275,23 @@ let rec do_turn board p ticket_hand train_hand deck trains rainbow =
   black_label := GMisc.label ~markup:black_markup ~packing:!black_box#pack ();
   !hand_row#attach ~left: 5 ~top:2 (!black_box#coerce);
 
+  (* Change faceup button labels *)
   let face_ups = deck in
-   (* change button labels *)
+  let i1 = match_jpg (List.nth face_ups 0) in
+  let _img1 = GMisc.image ~file:i1
+  ~packing: !button0#add () in
+  let i2 = match_jpg (List.nth face_ups 1) in
+  let _img2 = GMisc.image ~file:i2
+  ~packing: !button1#add () in
+  let i3 = match_jpg (List.nth face_ups 2) in
+  let _img3 = GMisc.image ~file:i3
+  ~packing: !button2#add () in
+  let i4 = match_jpg (List.nth face_ups 3) in
+  let _img4 = GMisc.image ~file:i4
+  ~packing: !button3#add () in
+  let i5 = match_jpg (List.nth face_ups 4) in
+  let _img5 = GMisc.image ~file:i5
+  ~packing: !button4#add () in
 
   (* Drawing a face up train card *)
   if (!draw0) then (
