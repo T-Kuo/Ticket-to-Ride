@@ -21,6 +21,8 @@ val cnames_list : unit -> string list
 (* the list of routes between two cities on a board *)
 val routes_between : city -> city -> board -> route list
 
+val routes_between_string: string -> string -> board -> route list
+
 (* determines the shortest path needed to connect two cities on a board *)
 val shortest_path : player -> city -> city -> board -> int * route list
 

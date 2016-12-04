@@ -211,10 +211,10 @@ let determine_winner state =
 
   help None 0 state
 
-let main num =
+let main =
   (*Ask for user input, number of human players. Rest will be AI.
    * min 1 human player, max 5. There are 5 players per game.*)
-  let humans = ref num in
+  let humans = ref 5 in
   let pl1 = { pid = Player1;
               ptype = if !humans = 0 then AI else (humans := (!humans -1); Human);
               color = Red;
@@ -262,4 +262,5 @@ let main num =
   let state = {player_info = pinfo; board = board;
                 train_deck = trkd; ticket_deck = tikd} in
   (* Display welcome message or something *)
+  let _ = Gui.main_gui () in
   do_turn state

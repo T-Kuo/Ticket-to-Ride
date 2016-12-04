@@ -1,15 +1,25 @@
 open Action
-open Game
+open GMain
+open GdkKeysyms
+open Board
+open Card
+
+let locale = GtkMain.Main.init ()
 
 (* Starting GUI page, choose number of players *)
-let start_page () =
+let start_page () = ()
   (* Text and 5 buttons *)
 
 
 let filler () = ["a";"b";"c"]
 (* Global refences to drop down objects *)
 let select_c0 = ref (GEdit.combo ~popdown_strings:(filler ()) ())
+
 let select_c1 = ref (GEdit.combo ~popdown_strings:(filler ()) ())
+
+let colors = GEdit.combo
+  ~popdown_strings: ["red";"blue";"yellow";"green";"orange";"pink";"white";
+  "black"] ~width:150 ()
 
 (* Global references to face up card objects *)
 
@@ -37,13 +47,131 @@ let match_jpg color =
   | Color.Black -> "images/black_card.jpg"
 
 let main_gui () =
+  let window = GWindow.window ~width: 1600 ~height: 850
+                              ~title: "Ticket to Ride"
+                              ~resizable: false () in
+  ignore(window#connect#destroy ~callback: GMain.Main.quit);
+  let bigbox = GPack.hbox ~packing:window#add ~border_width:5 () in
+  let deck = GPack.table ~rows:6 ~columns:1 ~homogeneous:true
+      ~packing:(bigbox#pack ~from: `END) () in
+  let claims = GPack.table ~rows:3 ~columns:1 ~homogeneous:false
+  ~packing:(bigbox#pack ~from: `END) () in
+  let bigtable = GPack.table ~rows:2 ~columns:1 ~width: 900 ~homogeneous:false
+  ~packing:bigbox#pack () in
+  let fixed = GPack.fixed () in
+  let bg_img = GMisc.image ~file: "images/board1.jpg" () in
+  fixed#put bg_img#coerce 105 0;
+  bigtable#attach ~left: 0 ~top:0 (fixed#coerce);
+  let claims_table = GPack.table ~rows:1 ~columns:3  ~width:450
+  ~homogeneous:true () in
+  let claim_button = GButton.button ~label: "Claim" () in
+  ignore(claim_button#connect#clicked ~callback: (fun () -> prerr_endline "Claim"));
+  claims#attach ~left: 0 ~top: 0 (claims_table#coerce);
+  claims#attach ~left: 0 ~top: 1 (claim_button#coerce);
   select_c0 := GEdit.combo ~popdown_strings:(Board.cnames_list ())
-    ~case_sensitive:false ~allow_empty:false
-      ~packing:(???) ();
-
+    ~case_sensitive:false ~allow_empty:false ~width: 150 ();
   select_c1 := GEdit.combo ~popdown_strings:(Board.cnames_list ())
-    ~case_sensitive:false ~allow_empty:false
-      ~packing:(???) ();
+    ~case_sensitive:false ~allow_empty:false ~width: 150 ();
+  claims_table#attach !select_c0#coerce ~left:0 ~top:0;
+  claims_table#attach !select_c1#coerce ~left:1 ~top:0;
+  claims_table#attach colors#coerce ~left:2 ~top:0;
+  let train_button = GButton.button ~label:"45 trains" () in
+  claims#attach ~left:0 ~top:3 (train_button#coerce);
+  let button1 = GButton.button () in
+  deck#attach ~left:0 ~top:0 (button1#coerce);
+  ignore(button1#connect#clicked ~callback:(fun () -> prerr_endline "button 1"));
+  let button2 = GButton.button () in
+  deck#attach  ~left:0 ~top:1 (button2#coerce);
+  ignore(button2#connect#clicked ~callback:(fun () -> prerr_endline "button 2"));
+  let button3 = GButton.button () in
+  deck#attach  ~left:0 ~top:2 (button3#coerce);
+  ignore(button3#connect#clicked ~callback:(fun () -> prerr_endline "button 3"));
+  let button4 = GButton.button () in
+  deck#attach  ~left:0 ~top:3 (button4#coerce);
+  ignore(button4#connect#clicked ~callback:(fun () -> prerr_endline "button 4"));
+  let button5 = GButton.button () in
+  deck#attach  ~left:0 ~top:4 (button5#coerce);
+  ignore(button5#connect#clicked ~callback:(fun () -> prerr_endline "button 5"));
+  let button6 = GButton.button () in
+  deck#attach  ~left:0 ~top:5 (button6#coerce);
+  ignore(button5#connect#clicked ~callback:(fun () -> prerr_endline "button 6"));
+  let _img1 = GMisc.image ~file:"../TtR/images/black_card.jpg"
+  ~packing: button1#add () in
+
+  let _img2 = GMisc.image ~file:"../TtR/images/black_card.jpg"
+  ~packing: button2#add () in
+
+  let _img3 = GMisc.image ~file:"../TtR/images/black_card.jpg"
+  ~packing: button3#add () in
+
+  let _img4 = GMisc.image ~file:"../TtR/images/black_card.jpg"
+  ~packing: button4#add () in
+
+  let _img5 = GMisc.image ~file:"../TtR/images/black_card.jpg"
+  ~packing: button5#add () in
+
+  let _img6 = GMisc.image ~file:"../TtR/images/deck_card.jpg"
+  ~packing: button6#add () in
+
+  let hand_row = GPack.table ~rows:3 ~columns:6 ~homogeneous:true () in
+  bigtable#attach ~left:0 ~top:1 (hand_row#coerce);
+
+  let rainbow_box = GPack.hbox () in
+  let _img6 = GMisc.image ~file:"../TtR/images/rainbow_card.jpg"  ~packing:rainbow_box#pack () in
+  let _label = GMisc.label ~text: "3" ~markup:"<span foreground=\"black\" size = \"x-large\">2</span>"
+  ~packing:rainbow_box#pack() in
+  hand_row#attach ~left: 1 ~top:1 (rainbow_box#coerce);
+
+  let red_box = GPack.hbox () in
+  let _img6 = GMisc.image ~file:"../TtR/images/red_card.jpg"  ~packing:red_box#pack () in
+  let _label = GMisc.label ~text: "5" ~markup:"<span foreground=\"black\" size = \"x-large\">3</span>"
+  ~packing:red_box#pack() in
+  hand_row#attach ~left: 2 ~top:1 (red_box#coerce);
+
+  let blue_box = GPack.hbox () in
+  let _img6 = GMisc.image ~file:"../TtR/images/blue_card.jpg"  ~packing:blue_box#pack () in
+  let _label = GMisc.label ~text: "5" ~markup:"<span foreground=\"black\" size = \"x-large\">6</span>"
+  ~packing:blue_box#pack() in
+  hand_row#attach ~left: 3 ~top:1 (blue_box#coerce);
+
+  let yellow_box = GPack.hbox () in
+  let _img6 = GMisc.image ~file:"../TtR/images/yellow_card.jpg"  ~packing:yellow_box#pack () in
+  let _label = GMisc.label ~text: "5" ~markup:"<span foreground=\"black\" size = \"x-large\">6</span>"
+  ~packing:yellow_box#pack() in
+  hand_row#attach ~left: 4 ~top:1 (yellow_box#coerce);
+
+  let green_box = GPack.hbox () in
+  let _img6 = GMisc.image ~file:"../TtR/images/green_card.jpg"  ~packing:green_box#pack () in
+  let _label = GMisc.label ~text: "5" ~markup:"<span foreground=\"black\" size = \"x-large\">6</span>"
+  ~packing:green_box#pack() in
+  hand_row#attach ~left: 1 ~top:2 (green_box#coerce);
+
+  let orange_box = GPack.hbox () in
+  let _img6 = GMisc.image ~file:"../TtR/images/orange_card.jpg"  ~packing:orange_box#pack () in
+  let _label = GMisc.label ~text: "5" ~markup:"<span foreground=\"black\" size = \"x-large\">6</span>"
+  ~packing:orange_box#pack() in
+  hand_row#attach ~left: 2 ~top:2 (orange_box#coerce);
+
+  let pink_box = GPack.hbox () in
+  let _img6 = GMisc.image ~file:"../TtR/images/purple_card.jpg"  ~packing:pink_box#pack () in
+  let _label = GMisc.label ~text: "5" ~markup:"<span foreground=\"black\" size = \"x-large\">6</span>"
+  ~packing:pink_box#pack() in
+  hand_row#attach ~left: 3 ~top:2 (pink_box#coerce);
+
+  let white_box = GPack.hbox () in
+  let _img6 = GMisc.image ~file:"../TtR/images/white_card.jpg"  ~packing:white_box#pack () in
+  let _label = GMisc.label ~text: "5" ~markup:"<span foreground=\"black\" size = \"x-large\">6</span>"
+  ~packing:white_box#pack() in
+  hand_row#attach ~left: 4 ~top:2 (white_box#coerce);
+
+  let black_box = GPack.hbox () in
+  let _img6 = GMisc.image ~file:"../TtR/images/black_card.jpg"  ~packing:black_box#pack () in
+  let _label = GMisc.label ~text: "5" ~markup:"<span foreground=\"black\" size = \"x-large\">6</span>"
+  ~packing:black_box#pack() in
+  hand_row#attach ~left: 5 ~top:2 (black_box#coerce);
+
+  window#show ();
+  GMain.Main.main ()
   (* Add current player text*)
   (* Add new game button *)
 
@@ -73,17 +201,17 @@ let rec do_turn board p ticket_hand train_hand deck trains rainbow =
 
   (* Change current player *)
 
-  let rainbow_num = Card.hand_has Color.Rainbow train_hand in
-  let red_num = Card.hand_has Color.Red train_hand in
-  let blue_num = Card.hand_has Color.Blue train_hand in
-  let yellow_num = Card.hand_has Color.Yellow train_hand in
-  let green_num = Card.hand_has Color.Green train_hand in
-  let orange_num = Card.hand_has Color.Orange train_hand in
-  let pink_num = Card.hand_has Color.Pink train_hand in
-  let white_num = Card.hand_has Color.White train_hand in
-  let black_num = Card.hand_has Color.Black train_hand in
-   (* update counter *);
-  let face_ups = deck.faceup in
+  let rainbow_num = TrainCard.hand_has Color.Rainbow train_hand in
+  let red_num = TrainCard.hand_has Color.Red train_hand in
+  let blue_num = TrainCard.hand_has Color.Blue train_hand in
+  let yellow_num = TrainCard.hand_has Color.Yellow train_hand in
+  let green_num = TrainCard.hand_has Color.Green train_hand in
+  let orange_num = TrainCard.hand_has Color.Orange train_hand in
+  let pink_num = TrainCard.hand_has Color.Pink train_hand in
+  let white_num = TrainCard.hand_has Color.White train_hand in
+  let black_num = TrainCard.hand_has Color.Black train_hand in
+   (* update counter *)
+  let face_ups = deck in
    (* change button labels *)
 
   (* Drawing a face up train card *)
@@ -109,10 +237,10 @@ let rec do_turn board p ticket_hand train_hand deck trains rainbow =
   (* Claiming a route *)
   else if (!claim_route) then (
     claim_route := false;
-    let route_color = get_color (!select_color#entry#text) in
+    let route_color = get_color (colors#entry#text) in
     let chosen_route =
       get_colorroutes (!select_c0#entry#text) (!select_c1#entry#text) board route_color in
-    if (chosen_route <> []) then ClaimRoute (List.hd chosen_route) route_color
+    if (chosen_route <> []) then ClaimRoute ((List.hd chosen_route), route_color)
     else (
       Printf.printf "No available routes, pick a different route";
       do_turn board p ticket_hand train_hand deck trains rainbow)
@@ -124,4 +252,3 @@ let rec do_turn board p ticket_hand train_hand deck trains rainbow =
   (* Wait for human player's turn *)
   else do_turn board p ticket_hand train_hand deck trains rainbow
 
-let () = start_page (); main_gui ()

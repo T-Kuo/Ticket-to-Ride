@@ -1,3 +1,1 @@
-
-
-Game.main
+let _ = Game.main
