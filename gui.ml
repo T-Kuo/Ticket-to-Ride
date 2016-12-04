@@ -81,7 +81,7 @@ let main_gui () =
   let window = GWindow.window ~width: 1600 ~height: 850
                               ~title: "Ticket to Ride"
                               ~resizable: false () in
-  ignore(window#connect#destroy ~callback: GMain.Main.quit);
+  ignore(window#connect#destroy ~callback: (fun () -> GMain.Main.quit (); exit 0));
   let bigbox = GPack.hbox ~packing:window#add ~border_width:5 () in
   deck := GPack.table ~rows:6 ~columns:1 ~homogeneous:true
     ~packing:(bigbox#pack ~from: `END) ();
