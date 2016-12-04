@@ -9,7 +9,7 @@ module TrainCard = struct
 
 	type deck = {draw_pile: t list; discard_pile: t list; faceup : t list}
 
-	let new_deck = 
+	let new_deck =
 		let () = Random.self_init ()
 		in
 		let rec add_cards c n d =
@@ -31,7 +31,7 @@ module TrainCard = struct
 	let empty_hand = {rainbow=0;red=0;blue=0;yellow=0;green=0;orange=0;
 		pink=0;white=0;black=0}
 
-	let is_empty d = 
+	let is_empty d =
 		List.length d.draw_pile = 0
 
 	let draw d =
@@ -55,7 +55,20 @@ module TrainCard = struct
 		|Black -> h.black>0
 		|Colorless -> false
 
-	let add_to_hand c h = 
+	let hand_has c h =
+	  match c with
+		|Rainbow -> h.rainbow
+		|Red -> h.red
+		|Blue -> h.blue
+		|Yellow -> h.yellow
+		|Green -> h.green
+		|Orange -> h.orange
+		|Pink -> h.pink
+		|White -> h.white
+		|Black -> h.black
+		|Colorless -> 0
+
+	let add_to_hand c h =
 		match c with
 		|Rainbow -> {h with rainbow = h.rainbow+1}
 		|Red -> {h with red = h.red+1}
@@ -82,7 +95,7 @@ module TrainCard = struct
 		|Colorless -> h
 
   (* shuffles a deck of cards *)
-	let shuffle d = 
+	let shuffle d =
 		let () = Random.self_init ()
 		in
 		let (n,l) = List.rev_map (fun c -> (Random.int 400),c) d.discard_pile
@@ -128,7 +141,7 @@ module TicketCard = struct
 
 	let add_to_hand c h = c::h
 
-	let remove_from_hand c h = 
+	let remove_from_hand c h =
 		let rec rem  e l = match l with
 		|[] -> []
 		|h::t when h=e -> t
@@ -136,7 +149,7 @@ module TicketCard = struct
 		in
 		rem c h
 
-	let shuffle d = 
+	let shuffle d =
 		let () = Random.self_init ()
 		in
 		let (n,l) = List.rev_map (fun c -> (Random.int 400),c) d.discard_pile
@@ -146,5 +159,5 @@ module TicketCard = struct
 		{draw_pile=l; discard_pile = []}
 
 	let to_pair c =  c.c0,c.c1
-	
+
 end
