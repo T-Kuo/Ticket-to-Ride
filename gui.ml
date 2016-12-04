@@ -48,6 +48,7 @@ let pink_label = ref (GMisc.label ())
 let white_label = ref (GMisc.label ())
 let black_label = ref (GMisc.label ())
 let train_button = ref (GButton.button ~label:"70 trains" ())
+let player_button = ref (GButton.button ~label:"Current player: Player 1" ())
 
 (* Global references to face up card objects *)
 
@@ -73,6 +74,7 @@ let match_jpg color =
   | Color.Pink -> "images/purple_card.jpg"
   | Color.White -> "images/white_card.jpg"
   | Color.Black -> "images/black_card.jpg"
+  | _ -> failwith "Not a color"
 
 let main_gui () =
   let window = GWindow.window ~width: 1600 ~height: 850
@@ -104,6 +106,7 @@ let main_gui () =
   claims_table#attach !select_c1#coerce ~left:1 ~top:0;
   claims_table#attach colors#coerce ~left:2 ~top:0;
   claims#attach ~left:0 ~top:3 (!train_button#coerce);
+  claims#attach ~left:0 ~top:4 (!player_button#coerce);
 
   button0 := GButton.button ();
   deck#attach ~left:0 ~top:0 (!button0#coerce);
@@ -129,21 +132,6 @@ let main_gui () =
   deck#attach  ~left:0 ~top:5 (!button5#coerce);
   ignore(!button5#connect#clicked ~callback:(fun () -> draw_deck := true;
     prerr_endline "button 6"));
-
-  let _img1 = GMisc.image ~file:"../TtR/images/black_card.jpg"
-  ~packing: !button0#add () in
-
-  let _img2 = GMisc.image ~file:"../TtR/images/black_card.jpg"
-  ~packing: !button1#add () in
-
-  let _img3 = GMisc.image ~file:"../TtR/images/black_card.jpg"
-  ~packing: !button2#add () in
-
-  let _img4 = GMisc.image ~file:"../TtR/images/black_card.jpg"
-  ~packing: !button3#add () in
-
-  let _img5 = GMisc.image ~file:"../TtR/images/black_card.jpg"
-  ~packing: !button4#add () in
 
   let _img6 = GMisc.image ~file:"../TtR/images/deck_card.jpg"
   ~packing: !button5#add () in
@@ -198,8 +186,6 @@ let main_gui () =
 
   window#show ();
   GMain.Main.main ()
-  (* Add current player text*)
-  (* Add new game button *)
 
 (* matches color string and returns corresponding type Color *)
 let get_color color_str =
@@ -214,18 +200,34 @@ let get_color color_str =
   | "pink" -> Color.Pink
   | "white" -> Color.White
   | "black" -> Color.Black
+  | _ -> failwith "Not a color"
 
 (* returns routes between city strings [s0] and [s1] on board [b] with
  * matching color [color] in a list *)
 let get_colorroutes s0 s1 b color =
   let all_routes = Board.routes_between_string s0 s1 b in
-  List.filter (fun x -> x.color=color && x.owner=None) all_routes
+  List.filter (fun x -> x.color=color && x.owner=Player.None) all_routes
+
+(* convert player pid to string *)
+let get_player p =
+  match p with
+  | Player.None -> "No Player"
+  | Player.Player1 -> "Player 1"
+  | Player.Player2 -> "Player 2"
+  | Player.Player3 -> "Player 3"
+  | Player.Player4 -> "Player 4"
+  | Player.Player5 -> "Player 5"
+  | _ -> failwith "Not a valid player"
 
 (* processes commands from human player and returns an action *)
 let rec do_turn board p ticket_hand train_hand deck trains rainbow =
   (* Update GUI state *)
 
-  (* Change current player *)
+  (* Change current player and number of trains left *)
+  let trains_left = string_of_int(trains)^" trains" in
+  train_button := GButton.button ~label:trains_left ();
+  let curr_player = "Current player: "^(get_player p) in
+  player_button := GButton.button ~label:curr_player ();
 
   (* Update counter *)
   let rainbow_num = string_of_int(TrainCard.hand_has Color.Rainbow train_hand) in
