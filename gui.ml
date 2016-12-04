@@ -217,7 +217,6 @@ let get_player p =
   | Player.Player3 -> "Player 3"
   | Player.Player4 -> "Player 4"
   | Player.Player5 -> "Player 5"
-  | _ -> failwith "Not a valid player"
 
 (* processes commands from human player and returns an action *)
 let rec do_turn board p ticket_hand train_hand deck trains rainbow =
@@ -279,6 +278,31 @@ let rec do_turn board p ticket_hand train_hand deck trains rainbow =
 
   (* Change faceup button labels *)
   let face_ups = deck in
+
+  let faceup_len = List.length face_ups in
+  Printf.printf "Face up deck length %i" faceup_len;
+
+  button0 := GButton.button ();
+  deck#attach ~left:0 ~top:0 (!button0#coerce);
+  ignore(!button0#connect#clicked ~callback:(fun () -> draw0 := true;
+    prerr_endline "button 1"));
+  button1 := GButton.button ();
+  deck#attach  ~left:0 ~top:1 (!button1#coerce);
+  ignore(!button1#connect#clicked ~callback:(fun () -> draw1 := true;
+    prerr_endline "button 2"));
+  button2 := GButton.button ();
+  deck#attach  ~left:0 ~top:2 (!button2#coerce);
+  ignore(!button2#connect#clicked ~callback:(fun () -> draw2 := true;
+    prerr_endline "button 3"));
+  button3 := GButton.button ();
+  deck#attach  ~left:0 ~top:3 (!button3#coerce);
+  ignore(!button3#connect#clicked ~callback:(fun () -> draw3 := true;
+    prerr_endline "button 4"));
+  button4 := GButton.button ();
+  deck#attach  ~left:0 ~top:4 (!button4#coerce);
+  ignore(!button4#connect#clicked ~callback:(fun () -> draw4 := true;
+    prerr_endline "button 5"));
+
   let i1 = match_jpg (List.nth face_ups 0) in
   let _img1 = GMisc.image ~file:i1
   ~packing: !button0#add () in

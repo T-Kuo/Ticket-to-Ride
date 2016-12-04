@@ -9,6 +9,14 @@ module TrainCard = struct
 
 	type deck = {draw_pile: t list; discard_pile: t list; faceup : t list}
 
+	let rec get_faceup (draw_pile,faceup) =
+	  match draw_pile with
+	  | [] -> failwith "Empty deck"
+	  | h::t -> (
+	    if ((List.length faceup)=5) then (draw_pile, faceup)
+	    else get_faceup (t, h::faceup))
+
+
 	let new_deck =
 		let () = Random.self_init ()
 		in
@@ -26,7 +34,9 @@ module TrainCard = struct
 		|> add_cards Black 12
 		|> List.fast_sort (fun (n0,c1) (n1,c1) -> compare n0 n1)
 		|> List.split
-		in {draw_pile=l; discard_pile=[];faceup=[]}
+		in
+		let draw_cards = get_faceup (l,[]) in
+		{draw_pile=fst draw_cards; discard_pile=[];faceup=snd draw_cards}
 
 	let empty_hand = {rainbow=0;red=0;blue=0;yellow=0;green=0;orange=0;
 		pink=0;white=0;black=0}
@@ -102,7 +112,8 @@ module TrainCard = struct
 			|> List.fast_sort (fun (n0,c0) (n1,c1) -> compare n0 n1)
 			|> List.split
 		in
-		{draw_pile=l; discard_pile = []; faceup=[]}
+		let draw_cards = get_faceup (l,[]) in
+		{draw_pile=fst draw_cards; discard_pile = []; faceup=snd draw_cards}
 
 	let difference a b =
 		let x = {rainbow=0;red=a.red-b.red;blue=a.blue-b.blue;yellow=a.yellow-b.yellow;
