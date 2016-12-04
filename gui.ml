@@ -26,6 +26,17 @@ let button2 = ref (GButton.button ())
 let button3 = ref (GButton.button ())
 let button4 = ref (GButton.button ())
 let button5 = ref (GButton.button ())
+
+let rainbow_box = ref (GPack.hbox ())
+let red_box = ref (GPack.hbox ())
+let blue_box = ref (GPack.hbox ())
+let yellow_box = ref (GPack.hbox ())
+let green_box = ref (GPack.hbox ())
+let orange_box = ref (GPack.hbox ())
+let pink_box = ref (GPack.hbox ())
+let white_box = ref (GPack.hbox ())
+let black_box = ref (GPack.hbox ())
+
 let rainbow_label = ref (GMisc.label ())
 let red_label = ref (GMisc.label ())
 let blue_label = ref (GMisc.label ())
@@ -139,59 +150,50 @@ let main_gui () =
   let hand_row = GPack.table ~rows:3 ~columns:6 ~homogeneous:true () in
   bigtable#attach ~left:0 ~top:1 (hand_row#coerce);
 
-  let rainbow_box = GPack.hbox () in
-  let _img6 = GMisc.image ~file:"../TtR/images/rainbow_card.jpg"  ~packing:rainbow_box#pack () in
+  let _img6 = GMisc.image ~file:"../TtR/images/rainbow_card.jpg"  ~packing:!rainbow_box#pack () in
   rainbow_label := GMisc.label ~markup:"<span foreground=\"black\" size =
-  \"x-large\">0</span>" ~packing:rainbow_box#pack ();
-  hand_row#attach ~left: 1 ~top:1 (rainbow_box#coerce);
+  \"x-large\">0</span>" ~packing:!rainbow_box#pack ();
+  hand_row#attach ~left: 1 ~top:1 (!rainbow_box#coerce);
 
-  let red_box = GPack.hbox () in
-  let _img6 = GMisc.image ~file:"../TtR/images/red_card.jpg"  ~packing:red_box#pack () in
+  let _img6 = GMisc.image ~file:"../TtR/images/red_card.jpg"  ~packing:!red_box#pack () in
   red_label := GMisc.label ~markup:"<span foreground=\"black\" size =
-  \"x-large\">0</span>" ~packing:red_box#pack ();
-  hand_row#attach ~left: 2 ~top:1 (red_box#coerce);
+  \"x-large\">0</span>" ~packing:!red_box#pack ();
+  hand_row#attach ~left: 2 ~top:1 (!red_box#coerce);
 
-  let blue_box = GPack.hbox () in
-  let _img6 = GMisc.image ~file:"../TtR/images/blue_card.jpg"  ~packing:blue_box#pack () in
+  let _img6 = GMisc.image ~file:"../TtR/images/blue_card.jpg"  ~packing:!blue_box#pack () in
   blue_label := GMisc.label ~markup:"<span foreground=\"black\" size =
-  \"x-large\">0</span>" ~packing:blue_box#pack ();
-  hand_row#attach ~left: 3 ~top:1 (blue_box#coerce);
+  \"x-large\">0</span>" ~packing:!blue_box#pack ();
+  hand_row#attach ~left: 3 ~top:1 (!blue_box#coerce);
 
-  let yellow_box = GPack.hbox () in
-  let _img6 = GMisc.image ~file:"../TtR/images/yellow_card.jpg"  ~packing:yellow_box#pack () in
+  let _img6 = GMisc.image ~file:"../TtR/images/yellow_card.jpg"  ~packing:!yellow_box#pack () in
   yellow_label := GMisc.label ~markup:"<span foreground=\"black\" size =
-  \"x-large\">0</span>" ~packing:yellow_box#pack ();
-  hand_row#attach ~left: 4 ~top:1 (yellow_box#coerce);
+  \"x-large\">0</span>" ~packing:!yellow_box#pack ();
+  hand_row#attach ~left: 4 ~top:1 (!yellow_box#coerce);
 
-  let green_box = GPack.hbox () in
-  let _img6 = GMisc.image ~file:"../TtR/images/green_card.jpg"  ~packing:green_box#pack () in
+  let _img6 = GMisc.image ~file:"../TtR/images/green_card.jpg"  ~packing:!green_box#pack () in
   green_label := GMisc.label ~markup:"<span foreground=\"black\" size =
-  \"x-large\">0</span>" ~packing:green_box#pack ();
-  hand_row#attach ~left: 1 ~top:2 (green_box#coerce);
+  \"x-large\">0</span>" ~packing:!green_box#pack ();
+  hand_row#attach ~left: 1 ~top:2 (!green_box#coerce);
 
-  let orange_box = GPack.hbox () in
-  let _img6 = GMisc.image ~file:"../TtR/images/orange_card.jpg"  ~packing:orange_box#pack () in
+  let _img6 = GMisc.image ~file:"../TtR/images/orange_card.jpg"  ~packing:!orange_box#pack () in
   orange_label := GMisc.label ~markup:"<span foreground=\"black\" size =
-  \"x-large\">0</span>" ~packing:orange_box#pack ();
-  hand_row#attach ~left: 2 ~top:2 (orange_box#coerce);
+  \"x-large\">0</span>" ~packing:!orange_box#pack ();
+  hand_row#attach ~left: 2 ~top:2 (!orange_box#coerce);
 
-  let pink_box = GPack.hbox () in
-  let _img6 = GMisc.image ~file:"../TtR/images/purple_card.jpg"  ~packing:pink_box#pack () in
+  let _img6 = GMisc.image ~file:"../TtR/images/purple_card.jpg"  ~packing:!pink_box#pack () in
   pink_label := GMisc.label ~markup:"<span foreground=\"black\" size =
-  \"x-large\">0</span>" ~packing:pink_box#pack ();
-  hand_row#attach ~left: 3 ~top:2 (pink_box#coerce);
+  \"x-large\">0</span>" ~packing:!pink_box#pack ();
+  hand_row#attach ~left: 3 ~top:2 (!pink_box#coerce);
 
-  let white_box = GPack.hbox () in
-  let _img6 = GMisc.image ~file:"../TtR/images/white_card.jpg"  ~packing:white_box#pack () in
+  let _img6 = GMisc.image ~file:"../TtR/images/white_card.jpg"  ~packing:!white_box#pack () in
   white_label := GMisc.label ~markup:"<span foreground=\"black\" size =
-  \"x-large\">0</span>" ~packing:white_box#pack ();
-  hand_row#attach ~left: 4 ~top:2 (white_box#coerce);
+  \"x-large\">0</span>" ~packing:!white_box#pack ();
+  hand_row#attach ~left: 4 ~top:2 (!white_box#coerce);
 
-  let black_box = GPack.hbox () in
-  let _img6 = GMisc.image ~file:"../TtR/images/black_card.jpg"  ~packing:black_box#pack () in
+  let _img6 = GMisc.image ~file:"../TtR/images/black_card.jpg"  ~packing:!black_box#pack () in
   black_label := GMisc.label ~markup:"<span foreground=\"black\" size =
-  \"x-large\">0</span>" ~packing:black_box#pack ();
-  hand_row#attach ~left: 5 ~top:2 (black_box#coerce);
+  \"x-large\">0</span>" ~packing:!black_box#pack ();
+  hand_row#attach ~left: 5 ~top:2 (!black_box#coerce);
 
   window#show ();
   GMain.Main.main ()
