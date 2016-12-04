@@ -20,6 +20,7 @@ let select_c1 = ref (GEdit.combo ~popdown_strings:(filler ()) ())
 let colors = GEdit.combo
   ~popdown_strings: ["red";"blue";"yellow";"green";"orange";"pink";"white";
   "black"] ~width:150 ()
+let deck = ref (GPack.table ())
 let button0 = ref (GButton.button ())
 let button1 = ref (GButton.button ())
 let button2 = ref (GButton.button ())
@@ -82,8 +83,8 @@ let main_gui () =
                               ~resizable: false () in
   ignore(window#connect#destroy ~callback: GMain.Main.quit);
   let bigbox = GPack.hbox ~packing:window#add ~border_width:5 () in
-  let deck = GPack.table ~rows:6 ~columns:1 ~homogeneous:true
-    ~packing:(bigbox#pack ~from: `END) () in
+  deck := GPack.table ~rows:6 ~columns:1 ~homogeneous:true
+    ~packing:(bigbox#pack ~from: `END) ();
   let claims = GPack.table ~rows:3 ~columns:1 ~homogeneous:false
   ~packing:(bigbox#pack ~from: `END) () in
   let bigtable = GPack.table ~rows:2 ~columns:1 ~width: 900 ~homogeneous:false
@@ -109,27 +110,27 @@ let main_gui () =
   claims#attach ~left:0 ~top:4 (!player_button#coerce);
 
   button0 := GButton.button ();
-  deck#attach ~left:0 ~top:0 (!button0#coerce);
+  !deck#attach ~left:0 ~top:0 (!button0#coerce);
   ignore(!button0#connect#clicked ~callback:(fun () -> draw0 := true;
     prerr_endline "button 1"));
   button1 := GButton.button ();
-  deck#attach  ~left:0 ~top:1 (!button1#coerce);
+  !deck#attach  ~left:0 ~top:1 (!button1#coerce);
   ignore(!button1#connect#clicked ~callback:(fun () -> draw1 := true;
     prerr_endline "button 2"));
   button2 := GButton.button ();
-  deck#attach  ~left:0 ~top:2 (!button2#coerce);
+  !deck#attach  ~left:0 ~top:2 (!button2#coerce);
   ignore(!button2#connect#clicked ~callback:(fun () -> draw2 := true;
     prerr_endline "button 3"));
   button3 := GButton.button ();
-  deck#attach  ~left:0 ~top:3 (!button3#coerce);
+  !deck#attach  ~left:0 ~top:3 (!button3#coerce);
   ignore(!button3#connect#clicked ~callback:(fun () -> draw3 := true;
     prerr_endline "button 4"));
   button4 := GButton.button ();
-  deck#attach  ~left:0 ~top:4 (!button4#coerce);
+  !deck#attach  ~left:0 ~top:4 (!button4#coerce);
   ignore(!button4#connect#clicked ~callback:(fun () -> draw4 := true;
     prerr_endline "button 5"));
   button5 := GButton.button ();
-  deck#attach  ~left:0 ~top:5 (!button5#coerce);
+  !deck#attach  ~left:0 ~top:5 (!button5#coerce);
   ignore(!button5#connect#clicked ~callback:(fun () -> draw_deck := true;
     prerr_endline "button 6"));
 
@@ -219,7 +220,7 @@ let get_player p =
   | Player.Player5 -> "Player 5"
 
 (* processes commands from human player and returns an action *)
-let rec do_turn board p ticket_hand train_hand deck trains rainbow =
+let rec do_turn board p ticket_hand train_hand face_ups trains rainbow =
   (* Update GUI state *)
 
   (* Change current player and number of trains left *)
@@ -277,29 +278,28 @@ let rec do_turn board p ticket_hand train_hand deck trains rainbow =
   !hand_row#attach ~left: 5 ~top:2 (!black_box#coerce);
 
   (* Change faceup button labels *)
-  let face_ups = deck in
 
   let faceup_len = List.length face_ups in
   Printf.printf "Face up deck length %i" faceup_len;
 
   button0 := GButton.button ();
-  deck#attach ~left:0 ~top:0 (!button0#coerce);
+  !deck#attach ~left:0 ~top:0 (!button0#coerce);
   ignore(!button0#connect#clicked ~callback:(fun () -> draw0 := true;
     prerr_endline "button 1"));
   button1 := GButton.button ();
-  deck#attach  ~left:0 ~top:1 (!button1#coerce);
+  !deck#attach  ~left:0 ~top:1 (!button1#coerce);
   ignore(!button1#connect#clicked ~callback:(fun () -> draw1 := true;
     prerr_endline "button 2"));
   button2 := GButton.button ();
-  deck#attach  ~left:0 ~top:2 (!button2#coerce);
+  !deck#attach  ~left:0 ~top:2 (!button2#coerce);
   ignore(!button2#connect#clicked ~callback:(fun () -> draw2 := true;
     prerr_endline "button 3"));
   button3 := GButton.button ();
-  deck#attach  ~left:0 ~top:3 (!button3#coerce);
+  !deck#attach  ~left:0 ~top:3 (!button3#coerce);
   ignore(!button3#connect#clicked ~callback:(fun () -> draw3 := true;
     prerr_endline "button 4"));
   button4 := GButton.button ();
-  deck#attach  ~left:0 ~top:4 (!button4#coerce);
+  !deck#attach  ~left:0 ~top:4 (!button4#coerce);
   ignore(!button4#connect#clicked ~callback:(fun () -> draw4 := true;
     prerr_endline "button 5"));
 
@@ -348,12 +348,12 @@ let rec do_turn board p ticket_hand train_hand deck trains rainbow =
     if (chosen_route <> []) then ClaimRoute ((List.hd chosen_route), route_color)
     else (
       Printf.printf "No available routes, pick a different route";
-      do_turn board p ticket_hand train_hand deck trains rainbow)
+      do_turn board p ticket_hand train_hand face_ups trains rainbow)
   )
   (* Requesting ticket cards *)
   else if (!req_tickets) then (
     req_tickets := false;
     RequestTickets)
   (* Wait for human player's turn *)
-  else do_turn board p ticket_hand train_hand deck trains rainbow
+  else do_turn board p ticket_hand train_hand face_ups trains rainbow
 
