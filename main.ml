@@ -1,3 +1,3 @@
-open Action
-open Board
-open Card
+
+
+Game.main
