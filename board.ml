@@ -15,7 +15,7 @@ let ca = {name="Calgary";connections=["Vancouver";"Seattle";"Helena";"Winnipeg"]
 let po = {name="Portland";connections=["Seattle";"Salt Lake City";
   "San Francisco"]}
 let sf = {name="San Francisco";connections=["Portland";"Salt Lake City";
-  "Los Angles"]}
+  "Los Angeles"]}
 let la = {name="Los Angeles";connections=["San Francisco";"Las Vegas";"Phoenix";
   "El Paso"]}
 let sl = {name="Salt Lake City";connections=["San Francisco";"Portland";
@@ -30,10 +30,10 @@ let fe = {name="Santa fe";connections=["Phoenix";"Denver";"El Paso";
 let ep = {name="El Paso";connections=["Los Angeles";"Phoenix";"Santa fe";
   "Oklahoma City";"Dallas";"Houston"]}
 let de = {name="Denver";connections=["Salt Lake City";"Helena";"Omaha";
-  "Kansa City"; "Oklahoma City";"Santa fe";"Phoenix"]}
-let wn = {name="Winnpeg";connections=["Calgary";"Helena";"Duluth";
+  "Kansas City"; "Oklahoma City";"Santa fe";"Phoenix"]}
+let wn = {name="Winnipeg";connections=["Calgary";"Helena";"Duluth";
   "Sault st. Marie"]}
-let du = {name="Duluth";connections=["Helena";"Winnpeg";"Sault st. Marie";
+let du = {name="Duluth";connections=["Helena";"Winnipeg";"Sault st. Marie";
   "Toronto";"Chicago";"Omaha"]}
 let oc = {name="Oklahoma City";connections=["Denver";"Kansas City";"Little Rock";
   "Dallas";"El Paso";"Santa fe"]}
@@ -48,7 +48,7 @@ let lr = {name="Little Rock";connections=["Oklahoma City";"Dallas";"New Orleans"
   "Nashville";"Saint Louis"]}
 let ol = {name="New Orleans";connections=["Houston";"Little Rock";"Atlanta";
   "Miami"]}
-let sm = {name="Sault st. Marie";connections=["Winnpeg";"Duluth";"Toronto";
+let sm = {name="Sault st. Marie";connections=["Winnipeg";"Duluth";"Toronto";
   "Montreal"]}
 let ci = {name="Chicago";connections=["Duluth";"Omaha";"Saint Louis";
   "Pittsburgh";"Toronto"]}

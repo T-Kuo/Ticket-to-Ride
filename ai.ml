@@ -29,17 +29,17 @@ if (seperatel < hubl) then (seperater |> remove_dups) else (hubr |> remove_dups)
 let do_turn b tkh (trh:TrainCard.hand) fup p ad = 
 	let dest_cities = List.fold_left (fun l tk -> match tk with (c0,c1) -> (c0,c1)::l) [] (TicketCard.to_list tkh) |> remove_dups in
 	let routes_to_complete = determine_best_route p dest_cities b in
-	if routes_to_complete = [] then RequestTickets else
+	if routes_to_complete = [] then DrawDeck else
 	(let curr_route = List.hd routes_to_complete in
 	let completable = match curr_route.color with
-	|Red -> (trh.red+trh.rainbow >= curr_route.length, Red)
-	|Blue -> (trh.blue+trh.rainbow >= curr_route.length,Blue)
-	|Yellow -> (trh.yellow+trh.rainbow >= curr_route.length, Yellow)
-	|Green -> (trh.green+trh.rainbow >= curr_route.length, Green)
-	|Orange -> (trh.orange+trh.rainbow >= curr_route.length, Orange)
-	|Pink -> (trh.pink+trh.rainbow >= curr_route.length, Pink)
-	|White -> (trh.white+trh.rainbow >= curr_route.length, White)
-	|Black -> (trh.black+trh.rainbow >= curr_route.length, Black)
+	|Red -> (trh.red >= curr_route.length, Red)
+	|Blue -> (trh.blue >= curr_route.length,Blue)
+	|Yellow -> (trh.yellow >= curr_route.length, Yellow)
+	|Green -> (trh.green >= curr_route.length, Green)
+	|Orange -> (trh.orange >= curr_route.length, Orange)
+	|Pink -> (trh.pink >= curr_route.length, Pink)
+	|White -> (trh.white >= curr_route.length, White)
+	|Black -> (trh.black >= curr_route.length, Black)
 	|Colorless -> 
 		let comp (c0,n0) (c1,n1) = if n0>=curr_route.length then (if n1<curr_route.length then (c0,n0)
 else if n0<=n1 then (c0,n0) else (c1,n1)) else if n1>=curr_route.length then (c1,n1)
