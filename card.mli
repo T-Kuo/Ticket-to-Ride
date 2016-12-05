@@ -23,7 +23,7 @@ module TrainCard : sig
 	val discard : t -> deck -> deck
 
   (* checks if a hand contains at least a card of the same type as t *)
-	val hand_contains : t -> hand -> bool
+	val hand_contains : t -> hand -> int -> bool
 
   (* returns number of type t card in hand *)
   val hand_has : t -> hand -> int

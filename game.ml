@@ -154,6 +154,10 @@ and execute_turn state action num =
         1)
       else
       (let pl = List.hd state.player_info in
+        if (not (Card.TrainCard.hand_contains c pl.train_hand rt.length)) then
+        (printf "Not enough cards";
+        1)
+      else
       (match (Board.claim_route pl.pid rt state.board) with
       |true, bd ->
         let rc = Card.TrainCard.remove_from_hand c pl.train_hand rt.length in
@@ -167,12 +171,8 @@ and execute_turn state action num =
                   player_info = (List.tl state.player_info) @ [np]} in
         current_state := ns;
         let pl = List.hd ns.player_info in
-        let _ = (if pl.ptype = AI then
-          (let pl2 = List.nth ns.player_info 1 in
-           Ivar.fill !current_gui_state (ns.board, pl2.pid, pl2.ticket_hand,
-             pl2.train_hand, ns.train_deck.faceup, pl2.trains_left, true);)
-        else (Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
-             pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);)) in
+        Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
         printf "Route claimed";
         1
       |false, bd ->

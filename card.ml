@@ -52,17 +52,17 @@ module TrainCard = struct
 	let discard c d =
 		{d with discard_pile = c::d.discard_pile}
 
-	let hand_contains c h =
+	let hand_contains c h n =
 		match c with
-		|Rainbow -> h.rainbow>0
-		|Red -> h.red>0
-		|Blue -> h.blue>0
-		|Yellow -> h.yellow>0
-		|Green -> h.green>0
-		|Orange -> h.orange>0
-		|Pink -> h.pink>0
-		|White -> h.white>0
-		|Black -> h.black>0
+		|Rainbow -> h.rainbow>=n
+		|Red -> h.red>=n
+		|Blue -> h.blue>=n
+		|Yellow -> h.yellow>=n
+		|Green -> h.green>=n
+		|Orange -> h.orange>=n
+		|Pink -> h.pink>=n
+		|White -> h.white>=n
+		|Black -> h.black>=n
 		|Colorless -> false
 
 	let hand_has c h =
