@@ -114,9 +114,12 @@ and execute_turn state action num =
         train_deck = nd} in
         current_state := ns;
         let pl = List.hd ns.player_info in
-        Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
-      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
-        1
+       if pl.ptype = AI then
+          (let pl2 = List.nth ns.player_info 1 in
+           Ivar.fill !current_gui_state (ns.board, pl2.pid, pl2.ticket_hand,
+             pl2.train_hand, ns.train_deck.faceup, pl2.trains_left, true); 1)
+        else (Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+             pl.train_hand, ns.train_deck.faceup, pl.trains_left, true); 1)
       |_ ->
         let dr = List.hd state.train_deck.draw_pile in
         let nfu = dr::rfu in
@@ -164,8 +167,12 @@ and execute_turn state action num =
                   player_info = (List.tl state.player_info) @ [np]} in
         current_state := ns;
         let pl = List.hd ns.player_info in
-        Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
-      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+        let _ = (if pl.ptype = AI then
+          (let pl2 = List.nth ns.player_info 1 in
+           Ivar.fill !current_gui_state (ns.board, pl2.pid, pl2.ticket_hand,
+             pl2.train_hand, ns.train_deck.faceup, pl2.trains_left, true);)
+        else (Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+             pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);)) in
         printf "Route claimed";
         1
       |false, bd ->
@@ -173,8 +180,10 @@ and execute_turn state action num =
         1))
 
     | RequestTickets ->
+      Core.Std.Printf.printf "ai made it \n";
       let pl = List.hd state.player_info in
-      let cd = List.hd state.ticket_deck.draw_pile in
+      if state.ticket_deck.draw_pile <> [] then
+      (let cd = List.hd state.ticket_deck.draw_pile in
       let nd = {state.ticket_deck with draw_pile =
                 (List.tl state.ticket_deck.draw_pile)} in
       let np = {pl with ticket_hand = cd::pl.ticket_hand} in
@@ -185,7 +194,14 @@ and execute_turn state action num =
       let pl = List.hd ns.player_info in
       Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
       pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
-        1
+        1)
+      else
+        (let ns = {state with player_info = (List.tl state.player_info)@[pl]} in
+         current_state := ns;
+         let pl2 = List.hd ns.player_info in
+         Ivar.fill !current_gui_state (ns.board, pl2.pid, pl2.ticket_hand,
+         pl2.train_hand, ns.train_deck.faceup, pl2.trains_left, true);
+         1)
     )
   |1 -> (
     match action with
@@ -210,9 +226,12 @@ and execute_turn state action num =
         player_info = (List.tl state.player_info) @ [np]} in
         current_state := ns;
         let pl = List.hd ns.player_info in
-        Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
-      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
-        1)
+        if pl.ptype = AI then
+          (let pl2 = List.nth ns.player_info 1 in
+           Ivar.fill !current_gui_state (ns.board, pl2.pid, pl2.ticket_hand,
+             pl2.train_hand, ns.train_deck.faceup, pl2.trains_left, true); 1)
+        else (Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+             pl.train_hand, ns.train_deck.faceup, pl.trains_left, true); 1))
     | DrawDeck ->
       let pl = List.hd state.player_info in
       let cd = List.hd state.train_deck.draw_pile in
@@ -224,9 +243,12 @@ and execute_turn state action num =
                 player_info = (List.tl state.player_info) @ [np]} in
       current_state := ns;
       let pl = List.hd ns.player_info in
-      Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
-      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
-      1
+      if pl.ptype = AI then
+          (let pl2 = List.nth ns.player_info 1 in
+           Ivar.fill !current_gui_state (ns.board, pl2.pid, pl2.ticket_hand,
+             pl2.train_hand, ns.train_deck.faceup, pl2.trains_left, true); 1)
+      else (Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+             pl.train_hand, ns.train_deck.faceup, pl.trains_left, true); 1)
 
     | ClaimRoute (rt,c) ->
       (*Display message saying this action cannot be performed.*)
@@ -261,7 +283,7 @@ let determine_winner state =
 let main =
   (*Ask for user input, number of human players. Rest will be AI.
    * min 1 human player, max 5. There are 5 players per game.*)
-  let humans = ref 5 in
+  let humans = ref 4 in
   let pl1 = { pid = Player1;
               ptype = if !humans = 0 then AI else (humans := (!humans -1); Human);
               color = Red;
