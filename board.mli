@@ -8,11 +8,24 @@ type route = {c0 : city; c1 : city; color : color; owner : player; length : int}
 (* the type of a Ticket to Ride board *)
 type board = {cities : city list; routes : route list}
 
-(* TODO add the cities and routes so they can be referenced in other modules *)
-val a : city
+(* TODO add the cities and routes so they can be referenced in test modules *)
+
+
 
 (* [new_board] is the game board with all routes unclaimed *)
 val new_board : board
+
+val vc : city
+val se : city
+val ca : city
+val ol : city
+val da : city
+
+val ab1 : route
+val ac : route
+val bc : route
+val ts1 : route
+val tv : route
 
 (* [cnames_list ()] generates a string list of all city names found on the
  * board *)
