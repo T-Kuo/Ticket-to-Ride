@@ -92,7 +92,31 @@ let get_player p =
   | Player.Player4 -> "Player 4"
   | Player.Player5 -> "Player 5"
 
-let rec update_buttons state action p train_hand =
+(* return matching string of color *)
+let color_str color =
+  match color with
+  | Color.Rainbow -> "rainbow"
+  | Color.Red -> "red"
+  | Color.Blue -> "blue"
+  | Color.Yellow -> "yellow"
+  | Color.Green -> "green"
+  | Color.Orange -> "orange"
+  | Color.Pink -> "pink"
+  | Color.White -> "white"
+  | Color.Black -> "black"
+  | Color.Colorless -> "colorless"
+  | _ -> failwith "Not a color"
+
+(* return string list of player's routes [proutes] with routes in the format
+ * c0 name-c1 name-color *)
+let rec str_routes proutes =
+  match proutes with
+  | [] -> []
+  | h::t -> (
+    let sr = h.c0.name^"-"^h.c1.name^"-"^(color_str h.color) in
+    sr::(str_routes t))
+
+let rec update_buttons state action board p train_hand =
   let _ = if !draw0 = true then
             (draw0 := false;
             Ivar.fill (!action) (DrawFaceUp 0);)
@@ -120,23 +144,23 @@ let rec update_buttons state action p train_hand =
    button0 := GButton.button ();
   !deck#attach ~left:0 ~top:0 (!button0#coerce);
   ignore(!button0#connect#clicked ~callback:(fun () -> draw0 := true;
-    update_buttons state action p train_hand));
+    update_buttons state action board p train_hand));
   button1 := GButton.button ();
   !deck#attach  ~left:0 ~top:1 (!button1#coerce);
   ignore(!button1#connect#clicked ~callback:(fun () -> draw1 := true;
-    update_buttons state action p train_hand));
+    update_buttons state action board p train_hand));
   button2 := GButton.button ();
   !deck#attach  ~left:0 ~top:2 (!button2#coerce);
   ignore(!button2#connect#clicked ~callback:(fun () -> draw2 := true;
-    update_buttons state action p train_hand));
+    update_buttons state action board p train_hand));
   button3 := GButton.button ();
   !deck#attach  ~left:0 ~top:3 (!button3#coerce);
   ignore(!button3#connect#clicked ~callback:(fun () -> draw3 := true;
-    update_buttons state action p train_hand));
+    update_buttons state action board p train_hand));
   button4 := GButton.button ();
   !deck#attach  ~left:0 ~top:4 (!button4#coerce);
   ignore(!button4#connect#clicked ~callback:(fun () -> draw4 := true;
-    update_buttons state action p train_hand));
+    update_buttons state action board p train_hand));
 
   let i1 = match_jpg (List.nth face_ups 0) in
   let _img1 = GMisc.image ~file:i1
@@ -201,6 +225,11 @@ let rec update_buttons state action p train_hand =
   player_button := GButton.button ~label:curr_player ();
   !claims#attach ~left:0 ~top:4 (!player_button#coerce);
 
+  printf "\n%s: \n" (get_player p);
+  let psr = str_routes (List.filter (fun x -> x.owner=p) board.routes) in
+  List.iter (printf "%s, ") psr;
+
+
   state := Ivar.create ();)
 
 let main_gui state action () =
@@ -243,27 +272,27 @@ let main_gui state action () =
   button0 := GButton.button ();
   !deck#attach ~left:0 ~top:0 (!button0#coerce);
   ignore(!button0#connect#clicked ~callback:(fun () -> draw0 := true;
-  update_buttons state action p train_hand));
+  update_buttons state action board p train_hand));
   button1 := GButton.button ();
   !deck#attach  ~left:0 ~top:1 (!button1#coerce);
   ignore(!button1#connect#clicked ~callback:(fun () -> draw1 := true;
-    update_buttons state action p train_hand));
+    update_buttons state action board p train_hand));
   button2 := GButton.button ();
   !deck#attach  ~left:0 ~top:2 (!button2#coerce);
   ignore(!button2#connect#clicked ~callback:(fun () -> draw2 := true;
-    update_buttons state action p train_hand));
+    update_buttons state action board p train_hand));
   button3 := GButton.button ();
   !deck#attach  ~left:0 ~top:3 (!button3#coerce);
   ignore(!button3#connect#clicked ~callback:(fun () -> draw3 := true;
-    update_buttons state action p train_hand));
+    update_buttons state action board p train_hand));
   button4 := GButton.button ();
   !deck#attach  ~left:0 ~top:4 (!button4#coerce);
   ignore(!button4#connect#clicked ~callback:(fun () -> draw4 := true;
-    update_buttons state action p train_hand));
+    update_buttons state action board p train_hand));
   button5 := GButton.button ();
   !deck#attach  ~left:0 ~top:5 (!button5#coerce);
   ignore(!button5#connect#clicked ~callback:(fun () -> draw_deck := true;
-    update_buttons state action p train_hand));
+    update_buttons state action board p train_hand));
 
   let i1 = match_jpg (List.nth face_ups 0) in
   let _img1 = GMisc.image ~file:i1
