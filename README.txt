@@ -10,4 +10,4 @@ sudo apt-get install libgtk2-dev
 opam install lablgtk
 opam install async
 
-To compile our game, run make within the 'TtR' directory of our project
+To compile our game, run make or make main within the source directory of our project where Makefile is found
