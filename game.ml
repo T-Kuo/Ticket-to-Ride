@@ -236,6 +236,7 @@ and execute_turn state action num =
         player_info = (List.tl state.player_info) @ [np];
         train_deck = nd} in
         current_state := ns;
+        let pl = List.hd ns.player_info in
         Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
       pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
         1
@@ -250,8 +251,8 @@ and execute_turn state action num =
         train_deck = nd;
         player_info = np::(List.tl state.player_info)} in
         current_state := ns;
-        Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
-      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+        Ivar.fill !current_gui_state (ns.board, np.pid, np.ticket_hand,
+      np.train_hand, ns.train_deck.faceup, np.trains_left, true);
         2)
 
     | DrawDeck ->
@@ -264,8 +265,8 @@ and execute_turn state action num =
                 train_deck = nd;
                 player_info = np::(List.tl state.player_info)} in
       current_state := ns;
-      Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
-      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+      Ivar.fill !current_gui_state (ns.board, np.pid, np.ticket_hand,
+      np.train_hand, ns.train_deck.faceup, np.trains_left, true);
       2
     | ClaimRoute (rt,c) ->
       let pl = List.hd state.player_info in
@@ -279,6 +280,7 @@ and execute_turn state action num =
                   board = bd;
                   player_info = (List.tl state.player_info) @ [np]} in
         current_state := ns;
+        let pl = List.hd ns.player_info in
         Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
       pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
         1
@@ -296,6 +298,7 @@ and execute_turn state action num =
         player_info = (List.tl state.player_info) @ [np];
         ticket_deck = nd} in
       current_state := ns;
+      let pl = List.hd ns.player_info in
       Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
       pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
         1
@@ -322,6 +325,7 @@ and execute_turn state action num =
         train_deck = nd;
         player_info = (List.tl state.player_info) @ [np]} in
         current_state := ns;
+        let pl = List.hd ns.player_info in
         Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
       pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
         1)
@@ -335,6 +339,7 @@ and execute_turn state action num =
                 train_deck = nd;
                 player_info = (List.tl state.player_info) @ [np]} in
       current_state := ns;
+      let pl = List.hd ns.player_info in
       Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
       pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
       1
