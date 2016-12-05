@@ -28,8 +28,9 @@ if (seperatel < hubl) then (seperater |> remove_dups) else (hubr |> remove_dups)
 
 let do_turn b tkh (trh:TrainCard.hand) fup p ad = 
 	let dest_cities = List.fold_left (fun l tk -> match tk with (c0,c1) -> (c0,c1)::l) [] (TicketCard.to_list tkh) |> remove_dups in
-let routes_to_complete = determine_best_route p dest_cities b in
-	let curr_route = List.hd routes_to_complete in
+	let routes_to_complete = determine_best_route p dest_cities b in
+	if routes_to_complete = [] then RequestTickets else
+	(let curr_route = List.hd routes_to_complete in
 	let completable = match curr_route.color with
 	|Red -> (trh.red+trh.rainbow >= curr_route.length, Red)
 	|Blue -> (trh.blue+trh.rainbow >= curr_route.length,Blue)
@@ -57,6 +58,6 @@ let rec cind c n l = match l with |[] -> -1 |h::t -> if c=h then n else (cind c 
 		match cind c 0 fup with
 		| -1 -> (match cind Rainbow 0 fup with |n when n > -1 && ad=false -> DrawFaceUp(n) |_ -> DrawDeck)
 		| n -> DrawFaceUp(n)
-	)
+	))
 
 let choose_tickets tks min = tks
