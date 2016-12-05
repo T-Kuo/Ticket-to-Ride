@@ -32,7 +32,7 @@ module TrainCard : sig
 	val add_to_hand : t -> hand -> hand
 
   (* removes a card from a hand *)
-	val remove_from_hand : t -> hand -> hand
+	val remove_from_hand : t -> hand -> int -> hand
 
   (* shuffles a deck of cards *)
 	val shuffle : deck -> deck

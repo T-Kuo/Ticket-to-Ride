@@ -91,17 +91,17 @@ module TrainCard = struct
 		|Black -> {h with black = h.black+1}
 		|Colorless -> h
 
-	let remove_from_hand c h =
+	let remove_from_hand c h n =
 		match c with
-		|Rainbow -> {h with rainbow = h.rainbow-1}
-		|Red -> {h with red = h.red-1}
-		|Blue -> {h with blue = h.blue-1}
-		|Yellow -> {h with yellow = h.yellow-1}
-		|Green -> {h with green = h.green-1}
-		|Orange -> {h with orange = h.orange-1}
-		|Pink -> {h with pink = h.pink-1}
-		|White -> {h with white = h.white-1}
-		|Black -> {h with black = h.black-1}
+		|Rainbow -> {h with rainbow = h.rainbow-n}
+		|Red -> {h with red = h.red-n}
+		|Blue -> {h with blue = h.blue-n}
+		|Yellow -> {h with yellow = h.yellow-n}
+		|Green -> {h with green = h.green-n}
+		|Orange -> {h with orange = h.orange-n}
+		|Pink -> {h with pink = h.pink-n}
+		|White -> {h with white = h.white-n}
+		|Black -> {h with black = h.black-n}
 		|Colorless -> h
 
   (* shuffles a deck of cards *)

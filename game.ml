@@ -1,7 +1,8 @@
 open Async.Std
 open Action
 open Board
-open Card
+open Card.TrainCard
+open Card.TicketCard
 open Color
 open Player
 
@@ -9,21 +10,21 @@ type player_state = {
   pid : Player.player;
   ptype : Player.player_type;
   color : Color.color;
-  train_hand : TrainCard.hand;
-  ticket_hand : TicketCard.hand;
+  train_hand : Card.TrainCard.hand;
+  ticket_hand : Card.TicketCard.hand;
   trains_left : int;
   score : int
   }
 
 type state = {
   board: Board.board;
-  train_deck : TrainCard.deck;
-  ticket_deck : TicketCard.deck;
+  train_deck : Card.TrainCard.deck;
+  ticket_deck : Card.TicketCard.deck;
   player_info : player_state list
   }
 
-let current_state = ref ({board = new_board; train_deck = TrainCard.new_deck;
-ticket_deck = TicketCard.new_deck; player_info = []})
+let current_state = ref ({board = new_board; train_deck = Card.TrainCard.new_deck;
+ticket_deck = Card.TicketCard.new_deck; player_info = []})
 let human_action = ref (Ivar.create ())
 let current_gui_state = ref (Ivar.create ())
 
@@ -107,7 +108,7 @@ and execute_turn state action num =
         let nd = {state.train_deck with
                   draw_pile = List.tl state.train_deck.draw_pile;
                   faceup = nfu} in
-        let np = {pl with train_hand = (TrainCard.add_to_hand cd pl.train_hand)} in
+        let np = {pl with train_hand = (Card.TrainCard.add_to_hand cd pl.train_hand)} in
         let ns = {state with
         player_info = (List.tl state.player_info) @ [np];
         train_deck = nd} in
@@ -122,7 +123,7 @@ and execute_turn state action num =
         let nd = {state.train_deck with
                   draw_pile = List.tl state.train_deck.draw_pile;
                   faceup = nfu} in
-        let np = {pl with train_hand = (TrainCard.add_to_hand cd pl.train_hand)} in
+        let np = {pl with train_hand = (Card.TrainCard.add_to_hand cd pl.train_hand)} in
         let ns = {state with
         train_deck = nd;
         player_info = np::(List.tl state.player_info)} in
@@ -136,7 +137,7 @@ and execute_turn state action num =
       let cd = List.hd state.train_deck.draw_pile in
       let nd = {state.train_deck with draw_pile =
                 List.tl (state.train_deck.draw_pile)} in
-      let np = {pl with train_hand = (TrainCard.add_to_hand cd pl.train_hand)} in
+      let np = {pl with train_hand = (Card.TrainCard.add_to_hand cd pl.train_hand)} in
       let ns = {state with
                 train_deck = nd;
                 player_info = np::(List.tl state.player_info)} in
@@ -152,7 +153,9 @@ and execute_turn state action num =
       (let pl = List.hd state.player_info in
       (match (Board.claim_route pl.pid rt state.board) with
       |true, bd ->
+        let rc = Card.TrainCard.remove_from_hand c pl.train_hand rt.length in
         let np = {pl with
+                  train_hand = rc;
                   trains_left = (pl.trains_left - rt.length);
                   score = (calculate_score pl.pid bd.routes 0)} in
         (*Check if # of trains left is below limit. If so call determine winner. End Game.*)
@@ -201,7 +204,7 @@ and execute_turn state action num =
         let nd = {state.train_deck with
                   draw_pile = List.tl state.train_deck.draw_pile;
                   faceup = nfu} in
-        let np = {pl with train_hand = (TrainCard.add_to_hand cd pl.train_hand)} in
+        let np = {pl with train_hand = (Card.TrainCard.add_to_hand cd pl.train_hand)} in
         let ns = {state with
         train_deck = nd;
         player_info = (List.tl state.player_info) @ [np]} in
@@ -215,7 +218,7 @@ and execute_turn state action num =
       let cd = List.hd state.train_deck.draw_pile in
       let nd = {state.train_deck with draw_pile =
                 (List.tl state.train_deck.draw_pile)} in
-      let np = {pl with train_hand = (TrainCard.add_to_hand cd pl.train_hand)} in
+      let np = {pl with train_hand = (Card.TrainCard.add_to_hand cd pl.train_hand)} in
       let ns = {state with
                 train_deck = nd;
                 player_info = (List.tl state.player_info) @ [np]} in
@@ -301,8 +304,8 @@ let main =
               score = 0} in
   let pinfo = [pl1;pl2;pl3;pl4;pl5] in
   let board = Board.new_board in
-  let trkd = TrainCard.new_deck in
-  let tikd = TicketCard.new_deck in
+  let trkd = Card.TrainCard.new_deck in
+  let tikd = Card.TicketCard.new_deck in
   let state = {player_info = pinfo; board = board;
                 train_deck = trkd; ticket_deck = tikd} in
   (* Display welcome message or something *)
