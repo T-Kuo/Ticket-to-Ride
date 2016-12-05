@@ -1,1 +1,0 @@
-type color = Colorless | Rainbow | Red | Blue | Yellow | Green | Orange | Pink | White | Black
