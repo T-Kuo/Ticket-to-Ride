@@ -134,7 +134,25 @@ module TicketCard = struct
 
 	let to_list h = List.map to_pair h
 
-	let new_deck = let dp = [] (* TODO: add all of the TTR tickets *)
+	(* All ticket cards *)
+	let la_ny = {c0=Board.la;c1=Board.ny;points:21}
+	let du_hu = {c0=Board.du;c1=Board.hu;points:8}
+	let sm_na = {c0=Board.sm;c1=Board.na;points:8}
+	let ny_al = {c0=Board.ny;c1=Board.al;points:6}
+	let vc_na = {c0=Board.vc;c1=Board.na;points:17}
+	let ca_ol = {c0=Board.ca;c1=Board.ol;points:10}
+	let ny_hu = {c0=Board.ny;c1=Board.hu;points:5}
+	let de_pi = {c0=Board.de;c1=Board.pi;points:11}
+	let sf_al = {c0=Board.sf;c1=Board.al;points:17}
+	let la_ci = {c0=Board.la;c1=Board.ci;points:16}
+	let ca_ph = {c0=Board.ca;c1=Board.ph;points:13}
+	let vc_fe = {c0=Board.vc;c1=Board.fe;points:13}
+	let bo_mi = {c0=Board.bo;c1=Board.mi;points:12}
+	let la_mi = {c0=Board.la;c1=Board.mi;points:20}
+	let ci_sf = {c0=Board.ci;c1=Board.sf;points:9}
+
+	let new_deck = let dp = [la_ny;du_hu;sm_na;ny_al;vc_na;ca_ol;ny_hu;de_pi;
+	  sf_al;la_ci;ca_ph;vc_fe;bo_mi;la_mi;ci_sf]
 		in
 		{draw_pile=dp;discard_pile=[]}
 
