@@ -1,4 +1,4 @@
-(* the type of a game action *)
+(* The variant type of an action. *)
 type action =
 | DrawFaceUp of int
 | DrawDeck
