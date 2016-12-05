@@ -303,6 +303,6 @@ let claim_route p r b =
     else
       (false, b)
   else
-    failwith "Route is not on the board"
+    (false, b)
 
 

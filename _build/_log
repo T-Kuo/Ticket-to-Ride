@@ -1,0 +1,58 @@
+### Starting build.
+# Target: main.ml.depends, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, debug, extension:ml, file:main.ml, ocaml, ocamldep, quiet, short_paths, thread }
+ocamlfind ocamldep -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -modules main.ml > main.ml.depends
+# Target: game.mli.depends, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, debug, extension:mli, file:game.mli, ocaml, ocamldep, quiet, short_paths, thread }
+ocamlfind ocamldep -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -modules game.mli > game.mli.depends
+# Target: action.mli.depends, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, debug, extension:mli, file:action.mli, ocaml, ocamldep, quiet, short_paths, thread }
+ocamlfind ocamldep -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -modules action.mli > action.mli.depends
+# Target: board.mli.depends, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, debug, extension:mli, file:board.mli, ocaml, ocamldep, quiet, short_paths, thread }
+ocamlfind ocamldep -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -modules board.mli > board.mli.depends
+# Target: color.ml.depends, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, debug, extension:ml, file:color.ml, ocaml, ocamldep, quiet, short_paths, thread }
+ocamlfind ocamldep -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -modules color.ml > color.ml.depends
+# Target: player.ml.depends, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, debug, extension:ml, file:player.ml, ocaml, ocamldep, quiet, short_paths, thread }
+ocamlfind ocamldep -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -modules player.ml > player.ml.depends
+# Target: color.cmo, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, byte, compile, debug, extension:cmo, extension:ml, file:color.cmo, file:color.ml, implem, ocaml, quiet, short_paths, thread }
+ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -o color.cmo color.ml
+# Target: player.cmo, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, byte, compile, debug, extension:cmo, extension:ml, file:player.cmo, file:player.ml, implem, ocaml, quiet, short_paths, thread }
+ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -o player.cmo player.ml
+# Target: board.cmi, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, byte, compile, debug, extension:mli, file:board.mli, interf, ocaml, quiet, short_paths, thread }
+ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -o board.cmi board.mli
+# Target: card.mli.depends, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, debug, extension:mli, file:card.mli, ocaml, ocamldep, quiet, short_paths, thread }
+ocamlfind ocamldep -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -modules card.mli > card.mli.depends
+# Target: action.cmi, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, byte, compile, debug, extension:mli, file:action.mli, interf, ocaml, quiet, short_paths, thread }
+ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -o action.cmi action.mli
+# Target: card.cmi, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, byte, compile, debug, extension:mli, file:card.mli, interf, ocaml, quiet, short_paths, thread }
+ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -o card.cmi card.mli
+# Target: game.cmi, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, byte, compile, debug, extension:mli, file:game.mli, interf, ocaml, quiet, short_paths, thread }
+ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -o game.cmi game.mli
+# Target: main.cmo, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, byte, compile, debug, extension:cmo, extension:ml, file:main.cmo, file:main.ml, implem, ocaml, quiet, short_paths, thread }
+ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -o main.cmo main.ml
+# Target: game.ml.depends, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, debug, extension:ml, file:game.ml, ocaml, ocamldep, quiet, short_paths, thread }
+ocamlfind ocamldep -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -modules game.ml > game.ml.depends
+# Target: ai.mli.depends, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, debug, extension:mli, file:ai.mli, ocaml, ocamldep, quiet, short_paths, thread }
+ocamlfind ocamldep -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -modules ai.mli > ai.mli.depends
+# Target: gui.mli.depends, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, debug, extension:mli, file:gui.mli, ocaml, ocamldep, quiet, short_paths, thread }
+ocamlfind ocamldep -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -modules gui.mli > gui.mli.depends
+# Target: ai.cmi, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, byte, compile, debug, extension:mli, file:ai.mli, interf, ocaml, quiet, short_paths, thread }
+ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -o ai.cmi ai.mli
+# Target: gui.cmi, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, byte, compile, debug, extension:mli, file:gui.mli, interf, ocaml, quiet, short_paths, thread }
+ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -o gui.cmi gui.mli
+# Target: game.cmo, tags: { package(async), package(core), package(lablgtk2), ppx(ppx-jane -as-ppx), bin_annot, byte, compile, debug, extension:cmo, extension:ml, file:game.cmo, file:game.ml, implem, ocaml, quiet, short_paths, thread }
+ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -o game.cmo game.ml
++ ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package async -package lablgtk2 -package core -ppx 'ppx-jane -as-ppx' -o game.cmo game.ml
+File "game.ml", line 51, characters 12-309:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a value that is not matched:
+0
+File "game.ml", line 96, characters 2-5419:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a value that is not matched:
+2
+File "game.ml", line 5, characters 0-11:
+Warning 45: this open statement shadows the constructor None (which is later used)
+File "game.ml", line 307, characters 2-15:
+Error: This expression has type
+         [> `Probably_should_not_use_blocking_Core_Printf_functions_with_Async ]
+       This is not a function; it cannot be applied.
+Command exited with code 2.
+# Compilation unsuccessful.

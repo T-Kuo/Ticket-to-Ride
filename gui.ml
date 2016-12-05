@@ -20,7 +20,7 @@ let select_c1 = ref (GEdit.combo ~popdown_strings:(filler ()) ())
 
 let colors = GEdit.combo
   ~popdown_strings: ["red";"blue";"yellow";"green";"orange";"pink";"white";
-  "black"] ~width:150 ()
+  "black"; "rainbow"] ~width:150 ()
 let deck = ref (GPack.table ())
 let claims = ref (GPack.table ())
 let button0 = ref (GButton.button ())
@@ -116,10 +116,32 @@ let rec str_routes proutes =
     let sr = h.c0.name^"-"^h.c1.name^"-"^(color_str h.color) in
     sr::(str_routes t))
 
+(* matches color string and returns corresponding type Color *)
+let get_color color_str =
+  match color_str with
+  | "colorless" -> Color.Colorless
+  | "rainbow" -> Color.Rainbow
+  | "red" -> Color.Red
+  | "blue" -> Color.Blue
+  | "yellow" -> Color.Yellow
+  | "green" -> Color.Green
+  | "orange" -> Color.Orange
+  | "pink" -> Color.Pink
+  | "white" -> Color.White
+  | "black" -> Color.Black
+  | _ -> failwith "Not a color"
+
+(* returns routes between city strings [s0] and [s1] on board [b] with
+ * matching color [color] in a list *)
+let get_colorroutes s0 s1 b color =
+  let all_routes = Board.routes_between_string s0 s1 b in
+  List.filter (fun x -> (x.color=color || x.color=Color.Colorless)
+    && x.owner=Player.None) all_routes
+
 let rec update_buttons state action board p train_hand =
   let _ = if !draw0 = true then
             (draw0 := false;
-            Ivar.fill (!action) (DrawFaceUp 0);)
+            Ivar.fill (!action) (DrawFaceUp 0))
           else if !draw1 = true then
             (draw1 := false;
             Ivar.fill !action (DrawFaceUp 1))
@@ -132,9 +154,21 @@ let rec update_buttons state action board p train_hand =
           else if !draw4 = true then
             (draw4 := false;
             Ivar.fill !action (DrawFaceUp 4))
-          else
+          else if !draw_deck = true then
             (draw_deck := false;
-            Ivar.fill !action (DrawDeck)) in
+            Ivar.fill !action (DrawDeck))
+          else
+            (claim_route := false;
+            let card_color = get_color (colors#entry#text) in
+            printf "%s \n" (colors#entry#text);
+            printf "%s \n" (!select_c0#entry#text);
+            printf "%s \n" (!select_c1#entry#text);
+            let chosen_route = get_colorroutes (!select_c0#entry#text) (!select_c1#entry#text) board card_color in
+            if (chosen_route <> []) then Ivar.fill !action (ClaimRoute ((List.hd chosen_route), card_color))
+            else
+              (let dum_city = {name="no";connections=[]} in
+              let dum_route = {c0=dum_city;c1=dum_city;color=card_color;owner=Player.None;length=1} in
+              Ivar.fill !action (ClaimRoute (dum_route, card_color)))) in
   upon (Ivar.read !state) (fun (board, p, ticket_hand, train_hand, face_ups, trains, rainbow) ->
   !button0#destroy ();
   !button1#destroy ();
@@ -225,7 +259,9 @@ let rec update_buttons state action board p train_hand =
   player_button := GButton.button ~label:curr_player ();
   !claims#attach ~left:0 ~top:4 (!player_button#coerce);
 
-  printf "\nCurrent routes for %s: \n" (get_player p);
+
+
+  printf "\nCurrent routes owned by %s: \n" (get_player p);
   let psr = str_routes (List.filter (fun x -> x.owner=p) board.routes) in
   List.iter (printf "%s, ") psr;
 
@@ -251,7 +287,8 @@ let main_gui state action () =
   let claims_table = GPack.table ~rows:1 ~columns:3  ~width:450
   ~homogeneous:true () in
   let claim_button = GButton.button ~label: "Claim" () in
-  ignore(claim_button#connect#clicked ~callback: (fun () -> Core.Std.Printf.printf "claim\n"));
+  ignore(claim_button#connect#clicked ~callback: (fun () -> claim_route := true;
+  update_buttons state action board p train_hand));
   !claims#attach ~left: 0 ~top: 0 (claims_table#coerce);
   !claims#attach ~left: 0 ~top: 1 (claim_button#coerce);
   select_c0 := GEdit.combo ~popdown_strings:(Board.cnames_list ())
@@ -388,27 +425,4 @@ let main_gui state action () =
 
   !window#show ();
   let _ = GtkThread.start () in ())
-
-(* matches color string and returns corresponding type Color *)
-let get_color color_str =
-  match color_str with
-  | "colorless" -> Color.Colorless
-  | "rainbow" -> Color.Rainbow
-  | "red" -> Color.Red
-  | "blue" -> Color.Blue
-  | "yellow" -> Color.Yellow
-  | "green" -> Color.Green
-  | "orange" -> Color.Orange
-  | "pink" -> Color.Pink
-  | "white" -> Color.White
-  | "black" -> Color.Black
-  | _ -> failwith "Not a color"
-
-(* returns routes between city strings [s0] and [s1] on board [b] with
- * matching color [color] in a list *)
-let get_colorroutes s0 s1 b color =
-  let all_routes = Board.routes_between_string s0 s1 b in
-  List.filter (fun x -> x.color=color && x.owner=Player.None) all_routes
-
-
 

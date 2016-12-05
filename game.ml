@@ -145,7 +145,11 @@ and execute_turn state action num =
       np.train_hand, ns.train_deck.faceup, np.trains_left, true);
       2
     | ClaimRoute (rt,c) ->
-      let pl = List.hd state.player_info in
+      if (c <> rt.color && rt.color<>Colorless && c<>Rainbow) then
+        (printf "No such route";
+        1)
+      else
+      (let pl = List.hd state.player_info in
       (match (Board.claim_route pl.pid rt state.board) with
       |true, bd ->
         let np = {pl with
@@ -159,10 +163,11 @@ and execute_turn state action num =
         let pl = List.hd ns.player_info in
         Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
       pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+        printf "Route claimed";
         1
       |false, bd ->
-        (*Display message saying this route can't be claimed.*)
-        1)
+        printf "Route can't be claimed";
+        1))
 
     | RequestTickets ->
       let pl = List.hd state.player_info in
