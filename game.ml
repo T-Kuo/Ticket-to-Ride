@@ -184,12 +184,12 @@ and execute_turn state action num =
       2
     | ClaimRoute (rt,c) ->
       if (c <> rt.color && rt.color<>Colorless && c<>Rainbow) then
-        (printf "No such route";
+        (printf "No such route\n";
         1)
       else
       (let pl = List.hd state.player_info in
         if (not (Card.TrainCard.hand_contains c pl.train_hand rt.length)) then
-        (printf "Not enough cards";
+        (printf "Not enough cards\n";
         1)
       else
       (match (Board.claim_route pl.pid rt state.board) with
@@ -207,14 +207,14 @@ and execute_turn state action num =
         let pl = List.hd ns.player_info in
         Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
       pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
-        printf "Route claimed";
+        printf "Route claimed\n";
         if pl.ptype = AI then
         (let psr = str_routes (List.filter (fun x -> x.owner=pl.pid) state.board.routes) in
         printf "\nCurrent routes owned by %s: \n" (get_player pl.pid);
         List.iter (printf "%s, ") psr; 1)
         else 1
       |false, bd ->
-        printf "Route can't be claimed";
+        printf "Route can't be claimed\n";
         1))
 
     | RequestTickets ->
