@@ -63,6 +63,12 @@ let rec cindex x i lst =
   |[] -> failwith "index out of range"
   |h::t -> if x = i then h else cindex x (i+1) t
 
+(* removes [n] from list [lst], returns [lst] if list has no [n] *)
+let rec remove_n lst n =
+  match lst with
+  |[] -> []
+  |h::t -> if n = h then t else h::(remove_n t n)
+
 (*let execute_turn state action num =
   current_gui_state := Ivar.create ();
   match num with
@@ -190,13 +196,12 @@ let rec cindex x i lst =
 
 (* the state of the game after a turn is taken *)
 let rec do_turn i state =
-  Core.Std.Printf.printf "new turn \n";
   current_gui_state := Ivar.create ();
   let pl = List.hd state.player_info in
-  if i = 1 then ( Core.Std.Printf.printf "we in here \n";
+  if i = 1 then (
   match  pl.ptype with
   |Human ->
-    upon (Ivar.read !human_action) (fun a -> Core.Std.Printf.printf "we made it too \n";
+    upon (Ivar.read !human_action) (fun a ->
     let i = execute_turn state a 0 in human_action := Ivar.create (); do_turn i !current_state);
   |AI -> let a = (Ai.do_turn state.board pl.ticket_hand pl.train_hand
     state.train_deck.faceup pl.pid true) in
@@ -218,10 +223,11 @@ and execute_turn state action num =
     | DrawFaceUp n ->
       let pl = List.hd state.player_info in
       let cd = cindex n 0 state.train_deck.faceup in
+      let rfu = remove_n (state.train_deck.faceup) cd in
       (match cd with
       |Rainbow ->
         let dr = List.hd state.train_deck.draw_pile in
-        let nfu = dr::(List.tl state.train_deck.faceup) in
+        let nfu = dr::rfu in
         let nd = {state.train_deck with
                   draw_pile = List.tl state.train_deck.draw_pile;
                   faceup = nfu} in
@@ -235,7 +241,7 @@ and execute_turn state action num =
         1
       |_ ->
         let dr = List.hd state.train_deck.draw_pile in
-        let nfu = dr::(List.tl state.train_deck.faceup) in
+        let nfu = dr::rfu in
         let nd = {state.train_deck with
                   draw_pile = List.tl state.train_deck.draw_pile;
                   faceup = nfu} in
@@ -299,6 +305,7 @@ and execute_turn state action num =
     | DrawFaceUp n ->
       let pl = List.hd state.player_info in
       let cd = cindex n 0 state.train_deck.faceup in
+      let rfu = remove_n (state.train_deck.faceup) cd in
       (match cd with
       |Rainbow ->
         (*Display message saying this card cannot be taken.*)
@@ -306,7 +313,7 @@ and execute_turn state action num =
 
       |_ ->
         let dr = List.hd state.train_deck.draw_pile in
-        let nfu = dr::(List.tl state.train_deck.faceup) in
+        let nfu = dr::rfu in
         let nd = {state.train_deck with
                   draw_pile = List.tl state.train_deck.draw_pile;
                   faceup = nfu} in
