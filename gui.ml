@@ -7,20 +7,15 @@ open Async.Std
 
 let locale = GtkMain.Main.init ()
 
-(* Starting GUI page, choose number of players *)
-let start_page () = ()
-  (* Text and 5 buttons *)
-
-
 let filler () = ["a";"b";"c"]
 (* Global refences to drop down objects *)
 let select_c0 = ref (GEdit.combo ~popdown_strings:(filler ()) ())
-
 let select_c1 = ref (GEdit.combo ~popdown_strings:(filler ()) ())
-
 let colors = GEdit.combo
   ~popdown_strings: ["red";"blue";"yellow";"green";"orange";"pink";"white";
   "black"; "rainbow"] ~width:150 ()
+
+(* Global references for deck card objects*)
 let deck = ref (GPack.table ())
 let claims = ref (GPack.table ())
 let button0 = ref (GButton.button ())
@@ -30,6 +25,7 @@ let button3 = ref (GButton.button ())
 let button4 = ref (GButton.button ())
 let button5 = ref (GButton.button ())
 
+(* Global references for hand card objects *)
 let hand_row = ref (GPack.table ())
 let rainbow_box = ref (GPack.hbox ())
 let red_box = ref (GPack.hbox ())
@@ -40,7 +36,6 @@ let orange_box = ref (GPack.hbox ())
 let pink_box = ref (GPack.hbox ())
 let white_box = ref (GPack.hbox ())
 let black_box = ref (GPack.hbox ())
-
 let rainbow_label = ref (GMisc.label ())
 let red_label = ref (GMisc.label ())
 let blue_label = ref (GMisc.label ())
@@ -50,13 +45,14 @@ let orange_label = ref (GMisc.label ())
 let pink_label = ref (GMisc.label ())
 let white_label = ref (GMisc.label ())
 let black_label = ref (GMisc.label ())
+
+(* Global references to train and player tracker objects *)
 let train_button = ref (GButton.button ~label:"70 trains" ())
 let player_button = ref (GButton.button ~label:"Current player: Player 1" ())
+
 let window = ref (GWindow.window ~width: 1600 ~height: 850
                               ~title: "Ticket to Ride"
                               ~resizable: false ())
-
-(* Global references to face up card objects *)
 
 (* Global references to check button clicking *)
 let draw0 = ref (false)
@@ -82,7 +78,7 @@ let match_jpg color =
   | Color.Black -> "images/black_card.jpg"
   | _ -> failwith "Not a color"
 
-(* convert player pid to string *)
+(* convert player pid [p] to player string *)
 let get_player p =
   match p with
   | Player.None -> "No Player"
@@ -138,7 +134,8 @@ let get_colorroutes s0 s1 b color =
   List.filter (fun x -> (x.color=color || x.color=Color.Colorless)
     && x.owner=Player.None) all_routes
 
-let rec update_buttons state action board p train_hand =
+(* updates gui buttons and labels based on human action to reflect game state *)
+let rec update_buttons state action board p train_hand trains =
   let _ = if !draw0 = true then
             (draw0 := false;
             Ivar.fill (!action) (DrawFaceUp 0))
@@ -160,9 +157,6 @@ let rec update_buttons state action board p train_hand =
           else
             (claim_route := false;
             let card_color = get_color (colors#entry#text) in
-            printf "%s \n" (colors#entry#text);
-            printf "%s \n" (!select_c0#entry#text);
-            printf "%s \n" (!select_c1#entry#text);
             let chosen_route = get_colorroutes (!select_c0#entry#text) (!select_c1#entry#text) board card_color in
             if (chosen_route <> []) then Ivar.fill !action (ClaimRoute ((List.hd chosen_route), card_color))
             else
@@ -170,31 +164,30 @@ let rec update_buttons state action board p train_hand =
               let dum_route = {c0=dum_city;c1=dum_city;color=card_color;owner=Player.None;length=1} in
               Ivar.fill !action (ClaimRoute (dum_route, card_color)))) in
   upon (Ivar.read !state) (fun (board, p, ticket_hand, train_hand, face_ups, trains, rainbow) ->
-  !button0#destroy ();
-  !button1#destroy ();
-  !button2#destroy ();
-  !button3#destroy ();
-  !button4#destroy ();
+
+  (* update face up card buttons *)
+  !button0#destroy (); !button1#destroy (); !button2#destroy ();
+  !button3#destroy (); !button4#destroy ();
    button0 := GButton.button ();
   !deck#attach ~left:0 ~top:0 (!button0#coerce);
   ignore(!button0#connect#clicked ~callback:(fun () -> draw0 := true;
-    update_buttons state action board p train_hand));
+    update_buttons state action board p train_hand trains));
   button1 := GButton.button ();
   !deck#attach  ~left:0 ~top:1 (!button1#coerce);
   ignore(!button1#connect#clicked ~callback:(fun () -> draw1 := true;
-    update_buttons state action board p train_hand));
+    update_buttons state action board p train_hand trains));
   button2 := GButton.button ();
   !deck#attach  ~left:0 ~top:2 (!button2#coerce);
   ignore(!button2#connect#clicked ~callback:(fun () -> draw2 := true;
-    update_buttons state action board p train_hand));
+    update_buttons state action board p train_hand trains));
   button3 := GButton.button ();
   !deck#attach  ~left:0 ~top:3 (!button3#coerce);
   ignore(!button3#connect#clicked ~callback:(fun () -> draw3 := true;
-    update_buttons state action board p train_hand));
+    update_buttons state action board p train_hand trains));
   button4 := GButton.button ();
   !deck#attach  ~left:0 ~top:4 (!button4#coerce);
   ignore(!button4#connect#clicked ~callback:(fun () -> draw4 := true;
-    update_buttons state action board p train_hand));
+    update_buttons state action board p train_hand trains));
 
   let i1 = match_jpg (List.nth face_ups 0) in
   let _img1 = GMisc.image ~file:i1
@@ -254,17 +247,24 @@ let rec update_buttons state action board p train_hand =
   \"x-large\">"^black_num^"</span>" in
   black_label := GMisc.label ~markup:black_markup ~packing:!black_box#pack ();
 
+  (* update current player label *)
   !player_button#destroy ();
+  !train_button#destroy ();
   let curr_player = "Current player: "^(get_player p) in
   player_button := GButton.button ~label:curr_player ();
   !claims#attach ~left:0 ~top:4 (!player_button#coerce);
+  let trains_left = string_of_int(trains)^" trains" in
+  train_button := GButton.button ~label:trains_left ();
+  !claims#attach ~left:0 ~top:3 (!train_button#coerce);
 
+  (* Print players and the routes they own *)
   printf "\nCurrent routes owned by %s: \n" (get_player p);
   let psr = str_routes (List.filter (fun x -> x.owner=p) board.routes) in
   List.iter (printf "%s, ") psr;
 
   state := Ivar.create ();)
 
+(* the main gui *)
 let main_gui state action () =
   upon (Ivar.read !state) (fun (board, p, ticket_hand, train_hand, face_ups, trains, rainbow) ->
   window := GWindow.window ~width: 1600 ~height: 850
@@ -285,7 +285,7 @@ let main_gui state action () =
   ~homogeneous:true () in
   let claim_button = GButton.button ~label: "Claim" () in
   ignore(claim_button#connect#clicked ~callback: (fun () -> claim_route := true;
-  update_buttons state action board p train_hand));
+  update_buttons state action board p train_hand trains));
   !claims#attach ~left: 0 ~top: 0 (claims_table#coerce);
   !claims#attach ~left: 0 ~top: 1 (claim_button#coerce);
   select_c0 := GEdit.combo ~popdown_strings:(Board.cnames_list ())
@@ -296,6 +296,7 @@ let main_gui state action () =
   claims_table#attach !select_c1#coerce ~left:1 ~top:0;
   claims_table#attach colors#coerce ~left:2 ~top:0;
 
+  (* current player and number of trains they have left *)
   let trains_left = string_of_int(trains)^" trains" in
   train_button := GButton.button ~label:trains_left ();
   let curr_player = "Current player: "^(get_player p) in
@@ -303,31 +304,33 @@ let main_gui state action () =
   !claims#attach ~left:0 ~top:3 (!train_button#coerce);
   !claims#attach ~left:0 ~top:4 (!player_button#coerce);
 
+  (* face up card buttons *)
   button0 := GButton.button ();
   !deck#attach ~left:0 ~top:0 (!button0#coerce);
   ignore(!button0#connect#clicked ~callback:(fun () -> draw0 := true;
-  update_buttons state action board p train_hand));
+  update_buttons state action board p train_hand trains));
   button1 := GButton.button ();
   !deck#attach  ~left:0 ~top:1 (!button1#coerce);
   ignore(!button1#connect#clicked ~callback:(fun () -> draw1 := true;
-    update_buttons state action board p train_hand));
+    update_buttons state action board p train_hand trains));
   button2 := GButton.button ();
   !deck#attach  ~left:0 ~top:2 (!button2#coerce);
   ignore(!button2#connect#clicked ~callback:(fun () -> draw2 := true;
-    update_buttons state action board p train_hand));
+    update_buttons state action board p train_hand trains));
   button3 := GButton.button ();
   !deck#attach  ~left:0 ~top:3 (!button3#coerce);
   ignore(!button3#connect#clicked ~callback:(fun () -> draw3 := true;
-    update_buttons state action board p train_hand));
+    update_buttons state action board p train_hand trains));
   button4 := GButton.button ();
   !deck#attach  ~left:0 ~top:4 (!button4#coerce);
   ignore(!button4#connect#clicked ~callback:(fun () -> draw4 := true;
-    update_buttons state action board p train_hand));
+    update_buttons state action board p train_hand trains));
   button5 := GButton.button ();
   !deck#attach  ~left:0 ~top:5 (!button5#coerce);
   ignore(!button5#connect#clicked ~callback:(fun () -> draw_deck := true;
-    update_buttons state action board p train_hand));
+    update_buttons state action board p train_hand trains));
 
+  (* Images button labels for face up cards and deck *)
   let i1 = match_jpg (List.nth face_ups 0) in
   let _img1 = GMisc.image ~file:i1
   ~packing: !button0#add () in
@@ -343,13 +346,13 @@ let main_gui state action () =
   let i5 = match_jpg (List.nth face_ups 4) in
   let _img5 = GMisc.image ~file:i5
   ~packing: !button4#add () in
-  let _img6 = GMisc.image ~file: "../TtR/images/deck_card.jpg"
+  let _img6 = GMisc.image ~file: "images/deck_card.jpg"
   ~packing: !button5#add () in
 
   hand_row := GPack.table ~rows:3 ~columns:6 ~homogeneous:true ();
   bigtable#attach ~left:0 ~top:1 (!hand_row#coerce);
 
-  (* Update counter *)
+  (* Card hand counter *)
   let rainbow_num = string_of_int(TrainCard.hand_has Color.Rainbow train_hand) in
   let red_num = string_of_int(TrainCard.hand_has Color.Red train_hand) in
   let blue_num = string_of_int(TrainCard.hand_has Color.Blue train_hand) in
@@ -360,6 +363,7 @@ let main_gui state action () =
   let white_num = string_of_int(TrainCard.hand_has Color.White train_hand) in
   let black_num = string_of_int(TrainCard.hand_has Color.Black train_hand) in
 
+  (* Labels for hand cards*)
   let _img6 = GMisc.image ~file:"images/rainbow_card.jpg"
    ~packing:!rainbow_box#pack () in
   let _img6 = GMisc.image ~file:"images/red_card.jpg"
@@ -379,7 +383,7 @@ let main_gui state action () =
   let _img6 = GMisc.image ~file:"images/black_card.jpg"
    ~packing:!black_box#pack () in
 
-
+  (* Display hand card counter *)
   let rainbow_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^rainbow_num^"</span>" in
   rainbow_label := GMisc.label ~markup:rainbow_markup ~packing:!rainbow_box#pack ();
@@ -422,4 +426,3 @@ let main_gui state action () =
 
   !window#show ();
   let _ = GtkThread.start () in ())
-
