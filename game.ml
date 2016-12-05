@@ -280,16 +280,35 @@ let determine_winner state =
 
   help None 0 state
 
+(* convert player pid to string *)
+let get_player p =
+  match p with
+  | Player.None -> "No Player"
+  | Player.Player1 -> "Player 1"
+  | Player.Player2 -> "Player 2"
+  | Player.Player3 -> "Player 3"
+  | Player.Player4 -> "Player 4"
+  | Player.Player5 -> "Player 5"
+
+(* return tickets in hand as strings *)
+let rec str_tickets ticket_hand =
+  match ticket_hand with
+  | [] -> []
+  | h::t -> (
+    let sr = h.c0.name^"-"^h.c1.name in
+    sr::(str_tickets t))
+
 let main =
-  (*Ask for user input, number of human players. Rest will be AI.
-   * min 1 human player, max 5. There are 5 players per game.*)
+  let tikd = (Card.TicketCard.new_deck) in
+  let tikdraw = tikd.draw_pile in
+
   let humans = ref 4 in
   let pl1 = { pid = Player1;
               ptype = if !humans = 0 then AI else (humans := (!humans -1); Human);
               color = Red;
               train_hand = {rainbow=0;red=0;blue=0;yellow=0;green=0;orange=0;
                             pink=0;white=0;black=0};
-              ticket_hand = [];
+              ticket_hand = (List.nth tikdraw 0)::(List.nth tikdraw 1)::(List.nth tikdraw 2)::[];
               trains_left = 70;
               score = 0} in
   let pl2 = { pid = Player2;
@@ -297,7 +316,7 @@ let main =
               color = Blue;
               train_hand = {rainbow=0;red=0;blue=0;yellow=0;green=0;orange=0;
                             pink=0;white=0;black=0};
-              ticket_hand = [];
+              ticket_hand = (List.nth tikdraw 3)::(List.nth tikdraw 4)::(List.nth tikdraw 5)::[];
               trains_left = 70;
               score = 0} in
   let pl3 = { pid = Player3;
@@ -305,7 +324,7 @@ let main =
               color = Green;
               train_hand = {rainbow=0;red=0;blue=0;yellow=0;green=0;orange=0;
                             pink=0;white=0;black=0};
-              ticket_hand = [];
+              ticket_hand = (List.nth tikdraw 6)::(List.nth tikdraw 7)::(List.nth tikdraw 8)::[];
               trains_left = 70;
               score = 0} in
   let pl4 = { pid = Player4;
@@ -313,7 +332,7 @@ let main =
               color = Yellow;
               train_hand = {rainbow=0;red=0;blue=0;yellow=0;green=0;orange=0;
                             pink=0;white=0;black=0};
-              ticket_hand = [];
+              ticket_hand = (List.nth tikdraw 9)::(List.nth tikdraw 10)::(List.nth tikdraw 11)::[];
               trains_left = 70;
               score = 0} in
   let pl5 = { pid = Player5;
@@ -321,13 +340,12 @@ let main =
               color = Black;
               train_hand = {rainbow=0;red=0;blue=0;yellow=0;green=0;orange=0;
                             pink=0;white=0;black=0};
-              ticket_hand = [];
+              ticket_hand = (List.nth tikdraw 12)::(List.nth tikdraw 13)::(List.nth tikdraw 14)::[];
               trains_left = 70;
               score = 0} in
   let pinfo = [pl1;pl2;pl3;pl4;pl5] in
   let board = Board.new_board in
   let trkd = Card.TrainCard.new_deck in
-  let tikd = Card.TicketCard.new_deck in
   let state = {player_info = pinfo; board = board;
                 train_deck = trkd; ticket_deck = tikd} in
   (* Display welcome message or something *)
@@ -335,6 +353,32 @@ let main =
   Ivar.fill !current_gui_state (state.board, pl1.pid, pl1.ticket_hand,
       pl1.train_hand, state.train_deck.faceup, pl1.trains_left, true);
   printf "Initializing GUI, start game\n%!";
+
+  printf "\nTicket cards owned by Player 1: \n";
+  let pt1_hand = pl1.ticket_hand in
+  let sth1 = str_tickets pt1_hand in
+  List.iter (printf "%s\n") sth1;
+
+  printf "\nTicket cards owned by Player 2: \n";
+  let pt2_hand = pl2.ticket_hand in
+  let sth2 = str_tickets pt2_hand in
+  List.iter (printf "%s\n") sth2;
+
+  printf "\nTicket cards owned by Player 3: \n";
+  let pt3_hand = pl3.ticket_hand in
+  let sth3 = str_tickets pt3_hand in
+  List.iter (printf "%s\n") sth3;
+
+  printf "\nTicket cards owned by Player 4: \n";
+  let pt4_hand = pl4.ticket_hand in
+  let sth4 = str_tickets pt4_hand in
+  List.iter (printf "%s\n") sth4;
+
+  printf "\nTicket cards owned by Player 5: \n";
+  let pt5_hand = pl1.ticket_hand in
+  let sth5 = str_tickets pt5_hand in
+  List.iter (printf "%s\n") sth5;
+
   let _ = Gui.main_gui current_gui_state human_action () in
   do_turn 1 state
 

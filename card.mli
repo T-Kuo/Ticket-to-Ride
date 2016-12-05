@@ -71,8 +71,6 @@ module TicketCard : sig
   (* removes a card from a hand *)
 	val remove_from_hand : t -> hand -> hand
 
-  (* shuffles a deck of cards *)
-	val shuffle : deck -> deck
 	val to_pair : t -> (Board.city * Board.city)
 	val to_list : hand -> (Board.city * Board.city) list
 end

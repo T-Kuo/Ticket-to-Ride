@@ -259,12 +259,9 @@ let rec update_buttons state action board p train_hand =
   player_button := GButton.button ~label:curr_player ();
   !claims#attach ~left:0 ~top:4 (!player_button#coerce);
 
-
-
   printf "\nCurrent routes owned by %s: \n" (get_player p);
   let psr = str_routes (List.filter (fun x -> x.owner=p) board.routes) in
   List.iter (printf "%s, ") psr;
-
 
   state := Ivar.create ();)
 
@@ -363,23 +360,23 @@ let main_gui state action () =
   let white_num = string_of_int(TrainCard.hand_has Color.White train_hand) in
   let black_num = string_of_int(TrainCard.hand_has Color.Black train_hand) in
 
-  let _img6 = GMisc.image ~file:"../TtR/images/rainbow_card.jpg"
+  let _img6 = GMisc.image ~file:"images/rainbow_card.jpg"
    ~packing:!rainbow_box#pack () in
-  let _img6 = GMisc.image ~file:"../TtR/images/red_card.jpg"
+  let _img6 = GMisc.image ~file:"images/red_card.jpg"
    ~packing:!red_box#pack () in
-  let _img6 = GMisc.image ~file:"../TtR/images/blue_card.jpg"
+  let _img6 = GMisc.image ~file:"images/blue_card.jpg"
   ~packing:!blue_box#pack () in
-  let _img6 = GMisc.image ~file:"../TtR/images/yellow_card.jpg"
+  let _img6 = GMisc.image ~file:"images/yellow_card.jpg"
    ~packing:!yellow_box#pack () in
-  let _img6 = GMisc.image ~file:"../TtR/images/green_card.jpg"
+  let _img6 = GMisc.image ~file:"images/green_card.jpg"
    ~packing:!green_box#pack () in
-  let _img6 = GMisc.image ~file:"../TtR/images/orange_card.jpg"
+  let _img6 = GMisc.image ~file:"images/orange_card.jpg"
   ~packing:!orange_box#pack () in
-  let _img6 = GMisc.image ~file:"../TtR/images/purple_card.jpg"
+  let _img6 = GMisc.image ~file:"images/purple_card.jpg"
    ~packing:!pink_box#pack () in
-  let _img6 = GMisc.image ~file:"../TtR/images/white_card.jpg"
+  let _img6 = GMisc.image ~file:"images/white_card.jpg"
   ~packing:!white_box#pack () in
-  let _img6 = GMisc.image ~file:"../TtR/images/black_card.jpg"
+  let _img6 = GMisc.image ~file:"images/black_card.jpg"
    ~packing:!black_box#pack () in
 
 
