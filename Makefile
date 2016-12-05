@@ -1,11 +1,11 @@
 main:
-	ocamlbuild -pkg lablgtk2 main.byte && ./main.byte
+	corebuild -pkgs async,lablgtk2 main.byte && ./main.byte
 
 test:
-	ocamlbuild -pkgs oUnit test_main.byte && ./test_main.byte
+	corebuild -pkgs oUnit test_main.byte && ./test_main.byte
 
 clean:
-	ocamlbuild -clean
+	corebuild -clean
 
 zip:
 	zip ttr	.zip *.ml{,i,y,l}
