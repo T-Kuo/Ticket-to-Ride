@@ -226,31 +226,31 @@ let rec update_buttons state action board p train_hand =
   !rainbow_label#destroy (); !red_label#destroy (); !blue_label#destroy ();
   !yellow_label#destroy (); !green_label#destroy (); !orange_label#destroy ();
   !pink_label#destroy (); !white_label#destroy (); !black_label#destroy ();
-  let rainbow_markup = "<span foreground=\"black\" size =
+  let rainbow_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^rainbow_num^"</span>" in
   rainbow_label := GMisc.label ~markup:rainbow_markup ~packing:!rainbow_box#pack ();
-  let red_markup = "<span foreground=\"black\" size =
+  let red_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^red_num^"</span>" in
   red_label := GMisc.label ~markup:red_markup ~packing:!red_box#pack ();
-  let blue_markup = "<span foreground=\"black\" size =
+  let blue_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^blue_num^"</span>" in
   blue_label := GMisc.label ~markup:blue_markup ~packing:!blue_box#pack ();
-  let yellow_markup = "<span foreground=\"black\" size =
+  let yellow_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^yellow_num^"</span>" in
   yellow_label := GMisc.label ~markup:yellow_markup ~packing:!yellow_box#pack ();
-  let green_markup = "<span foreground=\"black\" size =
+  let green_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^green_num^"</span>" in
   green_label := GMisc.label ~markup:green_markup ~packing:!green_box#pack ();
-  let orange_markup = "<span foreground=\"black\" size =
+  let orange_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^orange_num^"</span>" in
   orange_label := GMisc.label ~markup:orange_markup ~packing:!orange_box#pack ();
-  let pink_markup = "<span foreground=\"black\" size =
+  let pink_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^pink_num^"</span>" in
   pink_label := GMisc.label ~markup:pink_markup ~packing:!pink_box#pack ();
-  let white_markup = "<span foreground=\"black\" size =
+  let white_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^white_num^"</span>" in
   white_label := GMisc.label ~markup:white_markup ~packing:!white_box#pack ();
-  let black_markup = "<span foreground=\"black\" size =
+  let black_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^black_num^"</span>" in
   black_label := GMisc.label ~markup:black_markup ~packing:!black_box#pack ();
 
@@ -383,39 +383,39 @@ let main_gui state action () =
    ~packing:!black_box#pack () in
 
 
-  let rainbow_markup = "<span foreground=\"black\" size =
+  let rainbow_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^rainbow_num^"</span>" in
   rainbow_label := GMisc.label ~markup:rainbow_markup ~packing:!rainbow_box#pack ();
   !hand_row#attach ~left: 1 ~top:1 (!rainbow_box#coerce);
-  let red_markup = "<span foreground=\"black\" size =
+  let red_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^red_num^"</span>" in
   red_label := GMisc.label ~markup:red_markup ~packing:!red_box#pack ();
   !hand_row#attach ~left: 2 ~top:1 (!red_box#coerce);
-  let blue_markup = "<span foreground=\"black\" size =
+  let blue_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^blue_num^"</span>" in
   blue_label := GMisc.label ~markup:blue_markup ~packing:!blue_box#pack ();
   !hand_row#attach ~left: 3 ~top:1 (!blue_box#coerce);
-  let yellow_markup = "<span foreground=\"black\" size =
+  let yellow_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^yellow_num^"</span>" in
   yellow_label := GMisc.label ~markup:yellow_markup ~packing:!yellow_box#pack ();
   !hand_row#attach ~left: 4 ~top:1 (!yellow_box#coerce);
-  let green_markup = "<span foreground=\"black\" size =
+  let green_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^green_num^"</span>" in
   green_label := GMisc.label ~markup:green_markup ~packing:!green_box#pack ();
   !hand_row#attach ~left: 1 ~top:2 (!green_box#coerce);
-  let orange_markup = "<span foreground=\"black\" size =
+  let orange_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^orange_num^"</span>" in
   orange_label := GMisc.label ~markup:orange_markup ~packing:!orange_box#pack ();
   !hand_row#attach ~left: 2 ~top:2 (!orange_box#coerce);
-  let pink_markup = "<span foreground=\"black\" size =
+  let pink_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^pink_num^"</span>" in
   pink_label := GMisc.label ~markup:pink_markup ~packing:!pink_box#pack ();
   !hand_row#attach ~left: 3 ~top:2 (!pink_box#coerce);
-  let white_markup = "<span foreground=\"black\" size =
+  let white_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^white_num^"</span>" in
   white_label := GMisc.label ~markup:white_markup ~packing:!white_box#pack ();
   !hand_row#attach ~left: 4 ~top:2 (!white_box#coerce);
-  let black_markup = "<span foreground=\"black\" size =
+  let black_markup = "<span foreground=\"black\" size = \
   \"x-large\">"^black_num^"</span>" in
   black_label := GMisc.label ~markup:black_markup ~packing:!black_box#pack ();
   !hand_row#attach ~left: 5 ~top:2 (!black_box#coerce);
