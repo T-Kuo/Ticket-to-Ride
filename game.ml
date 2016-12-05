@@ -3,6 +3,7 @@ open Board
 open Card
 open Color
 open Player
+open Async.Std
 
 type player_state = {
   pid : Player.player;
@@ -20,6 +21,11 @@ type state = {
   ticket_deck : TicketCard.deck;
   player_info : player_state list
   }
+
+let current_state = ref ({board = new_board; train_deck = TrainCard.new_deck;
+ticket_deck = TicketCard.new_deck; player_info = []})
+let human_action = ref (Ivar.create ())
+let current_gui_state = ref (Ivar.create ())
 
 (* checks if a player is a human player *)
 let rec human_player p state =
@@ -57,30 +63,154 @@ let rec cindex x i lst =
   |[] -> failwith "index out of range"
   |h::t -> if x = i then h else cindex x (i+1) t
 
+(*let execute_turn state action num =
+  current_gui_state := Ivar.create ();
+  match num with
+  |0 -> (
+    match action with
+    | DrawFaceUp n ->
+      let pl = List.hd state.player_info in
+      let cd = cindex n 0 state.train_deck.faceup in
+      (match cd with
+      |Rainbow ->
+        let dr = List.hd state.train_deck.draw_pile in
+        let nfu = dr::(List.tl state.train_deck.faceup) in
+        let nd = {state.train_deck with
+                  draw_pile = List.tl state.train_deck.draw_pile;
+                  faceup = nfu} in
+        let np = {pl with train_hand = (TrainCard.add_to_hand cd pl.train_hand)} in
+        let ns = {state with
+        player_info = (List.tl state.player_info) @ [np];
+        train_deck = nd} in
+        current_state := ns;
+        Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+      |_ ->
+        let dr = List.hd state.train_deck.draw_pile in
+        let nfu = dr::(List.tl state.train_deck.faceup) in
+        let nd = {state.train_deck with
+                  draw_pile = List.tl state.train_deck.draw_pile;
+                  faceup = nfu} in
+        let np = {pl with train_hand = (TrainCard.add_to_hand cd pl.train_hand)} in
+        let ns = {state with
+        train_deck = nd;
+        player_info = np::(List.tl state.player_info)} in
+        current_state := ns;
+        Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);)
 
+    | DrawDeck ->
+      let pl = List.hd state.player_info in
+      let cd = List.hd state.train_deck.draw_pile in
+      let nd = {state.train_deck with draw_pile =
+                List.tl (state.train_deck.draw_pile)} in
+      let np = {pl with train_hand = (TrainCard.add_to_hand cd pl.train_hand)} in
+      let ns = {state with
+                train_deck = nd;
+                player_info = np::(List.tl state.player_info)} in
+      current_state := ns;
+      Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+    | ClaimRoute (rt,c) ->
+      let pl = List.hd state.player_info in
+      (match (Board.claim_route pl.pid rt state.board) with
+      |true, bd ->
+        let np = {pl with
+                  trains_left = (pl.trains_left - rt.length);
+                  score = (calculate_score pl.pid bd.routes 0)} in
+        (*Check if # of trains left is below limit. If so call determine winner. End Game.*)
+        let ns = {state with
+                  board = bd;
+                  player_info = (List.tl state.player_info) @ [np]} in
+        current_state := ns;
+        Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+      |false, bd ->
+        (*Display message saying this route can't be claimed.*)
+        ())
+
+    | RequestTickets ->
+      let pl = List.hd state.player_info in
+      let cd = List.hd state.ticket_deck.draw_pile in
+      let nd = {state.ticket_deck with draw_pile =
+                (List.tl state.ticket_deck.draw_pile)} in
+      let np = {pl with ticket_hand = cd::pl.ticket_hand} in
+      let ns = {state with
+        player_info = (List.tl state.player_info) @ [np];
+        ticket_deck = nd} in
+      current_state := ns;
+      Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+    )
+  |1 -> (
+    match action with
+    | DrawFaceUp n ->
+      let pl = List.hd state.player_info in
+      let cd = cindex n 0 state.train_deck.faceup in
+      (match cd with
+      |Rainbow ->
+        (*Display message saying this card cannot be taken.*)
+        ()
+
+      |_ ->
+        let dr = List.hd state.train_deck.draw_pile in
+        let nfu = dr::(List.tl state.train_deck.faceup) in
+        let nd = {state.train_deck with
+                  draw_pile = List.tl state.train_deck.draw_pile;
+                  faceup = nfu} in
+        let np = {pl with train_hand = (TrainCard.add_to_hand cd pl.train_hand)} in
+        let ns = {state with
+        train_deck = nd;
+        player_info = (List.tl state.player_info) @ [np]} in
+        current_state := ns;
+        Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);)
+    | DrawDeck ->
+      let pl = List.hd state.player_info in
+      let cd = List.hd state.train_deck.draw_pile in
+      let nd = {state.train_deck with draw_pile =
+                (List.tl state.train_deck.draw_pile)} in
+      let np = {pl with train_hand = (TrainCard.add_to_hand cd pl.train_hand)} in
+      let ns = {state with
+                train_deck = nd;
+                player_info = (List.tl state.player_info) @ [np]} in
+      current_state := ns;
+      Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+
+    | ClaimRoute (rt,c) ->
+      (*Display message saying this action cannot be performed.*)
+      ()
+
+    | RequestTickets ->
+      (*Display message saying this action cannot be performed.*)
+      ()
+    )*)
 
 
 (* the state of the game after a turn is taken *)
-let rec do_turn state =
-   let pl = List.hd state.player_info in
+let rec do_turn i state =
+  Core.Std.Printf.printf "new turn \n";
+  current_gui_state := Ivar.create ();
+  let pl = List.hd state.player_info in
+  if i = 1 then ( Core.Std.Printf.printf "we in here \n";
   match  pl.ptype with
   |Human ->
-    let a = (Gui.do_turn state.board pl.pid pl.ticket_hand
-      pl.train_hand state.train_deck.faceup pl.trains_left true) in
-    execute_turn state a 0
+    upon (Ivar.read !human_action) (fun a -> Core.Std.Printf.printf "we made it too \n";
+    let i = execute_turn state a 0 in human_action := Ivar.create (); do_turn i !current_state);
   |AI -> let a = (Ai.do_turn state.board pl.ticket_hand pl.train_hand
     state.train_deck.faceup pl.pid true) in
-    execute_turn state a 0
-and do_turn2 state =
+    let i = execute_turn state a 0 in do_turn i !current_state)
+  else (
+  current_gui_state := Ivar.create ();
   let pl = List.hd state.player_info in
   match pl.ptype with
   |Human ->
-    let a = (Gui.do_turn state.board pl.pid pl.ticket_hand
-      pl.train_hand state.train_deck.faceup pl.trains_left true) in
-    execute_turn state a 1
+    upon (Ivar.read !human_action) (fun a ->
+    let i = execute_turn state a 1 in human_action := Ivar.create (); do_turn i !current_state);
   |AI -> let a = (Ai.do_turn state.board pl.ticket_hand pl.train_hand
     state.train_deck.faceup pl.pid true) in
-    execute_turn state a 1
+    let i = execute_turn state a 1 in do_turn i !current_state)
 and execute_turn state action num =
   match num with
   |0 -> (
@@ -99,7 +229,10 @@ and execute_turn state action num =
         let ns = {state with
         player_info = (List.tl state.player_info) @ [np];
         train_deck = nd} in
-        do_turn ns
+        current_state := ns;
+        Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+        1
       |_ ->
         let dr = List.hd state.train_deck.draw_pile in
         let nfu = dr::(List.tl state.train_deck.faceup) in
@@ -110,7 +243,10 @@ and execute_turn state action num =
         let ns = {state with
         train_deck = nd;
         player_info = np::(List.tl state.player_info)} in
-        do_turn2 ns)
+        current_state := ns;
+        Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+        2)
 
     | DrawDeck ->
       let pl = List.hd state.player_info in
@@ -121,7 +257,10 @@ and execute_turn state action num =
       let ns = {state with
                 train_deck = nd;
                 player_info = np::(List.tl state.player_info)} in
-      do_turn2 ns
+      current_state := ns;
+      Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+      2
     | ClaimRoute (rt,c) ->
       let pl = List.hd state.player_info in
       (match (Board.claim_route pl.pid rt state.board) with
@@ -133,10 +272,13 @@ and execute_turn state action num =
         let ns = {state with
                   board = bd;
                   player_info = (List.tl state.player_info) @ [np]} in
-        do_turn ns
+        current_state := ns;
+        Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+        1
       |false, bd ->
         (*Display message saying this route can't be claimed.*)
-        do_turn state)
+        1)
 
     | RequestTickets ->
       let pl = List.hd state.player_info in
@@ -147,7 +289,10 @@ and execute_turn state action num =
       let ns = {state with
         player_info = (List.tl state.player_info) @ [np];
         ticket_deck = nd} in
-      do_turn ns
+      current_state := ns;
+      Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+        1
     )
   |1 -> (
     match action with
@@ -157,7 +302,7 @@ and execute_turn state action num =
       (match cd with
       |Rainbow ->
         (*Display message saying this card cannot be taken.*)
-        do_turn2 state
+        2
 
       |_ ->
         let dr = List.hd state.train_deck.draw_pile in
@@ -169,7 +314,10 @@ and execute_turn state action num =
         let ns = {state with
         train_deck = nd;
         player_info = (List.tl state.player_info) @ [np]} in
-        do_turn ns)
+        current_state := ns;
+        Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+        1)
     | DrawDeck ->
       let pl = List.hd state.player_info in
       let cd = List.hd state.train_deck.draw_pile in
@@ -179,15 +327,18 @@ and execute_turn state action num =
       let ns = {state with
                 train_deck = nd;
                 player_info = (List.tl state.player_info) @ [np]} in
-      do_turn ns
+      current_state := ns;
+      Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
+      pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
+      1
 
     | ClaimRoute (rt,c) ->
       (*Display message saying this action cannot be performed.*)
-      do_turn state
+      1
 
     | RequestTickets ->
       (*Display message saying this action cannot be performed.*)
-      do_turn state
+      1
     )
 
 (* the score of a player in a given state of the game *)
@@ -262,5 +413,11 @@ let main =
   let state = {player_info = pinfo; board = board;
                 train_deck = trkd; ticket_deck = tikd} in
   (* Display welcome message or something *)
-  let _ = Gui.main_gui () in
-  do_turn state
+  current_state := state;
+  Ivar.fill !current_gui_state (state.board, pl1.pid, pl1.ticket_hand,
+      pl1.train_hand, state.train_deck.faceup, pl1.trains_left, true);
+  let _ = Gui.main_gui current_gui_state human_action () in
+  do_turn 1 state
+
+let _ = main
+let _ = Scheduler.go ()

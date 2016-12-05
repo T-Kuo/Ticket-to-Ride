@@ -1,3 +1,4 @@
+open Async.Std
 (* the type of a state of a Ticket to Ride game *)
 type player_state = {
   pid : Player.player;
@@ -17,6 +18,12 @@ type state = {
 	player_info : player_state list
   }
 
+val current_state : state ref
+val current_gui_state :(Board.board * Player.player * Card.TicketCard.hand * Card.TrainCard.hand * Card.TrainCard.t list *
+          int * bool)
+         Ivar.t ref
+val human_action: Action.action Ivar.t ref
+
 (* checks if a player is a human player *)
 val human_player : Player.player -> state -> bool
 
@@ -24,7 +31,7 @@ val human_player : Player.player -> state -> bool
 val player_hand : Player.player -> state -> Card.TrainCard.hand
 
 (* the state of the game after a turn is taken *)
-val do_turn : state -> state
+val do_turn : int -> state -> unit
 
 (* the score of a player in a given state of the game *)
 val score_player : Player.player -> state -> int
