@@ -70,6 +70,40 @@ let rec remove_n lst n =
   |[] -> []
   |h::t -> if n = h then t else h::(remove_n t n)
 
+(* convert player pid to string *)
+let get_player pid =
+  match pid with
+  | Player.None -> "No Player"
+  | Player.Player1 -> "Player 1"
+  | Player.Player2 -> "Player 2"
+  | Player.Player3 -> "Player 3"
+  | Player.Player4 -> "Player 4"
+  | Player.Player5 -> "Player 5"
+
+(* return matching string of color *)
+let color_str color =
+  match color with
+  | Color.Rainbow -> "rainbow"
+  | Color.Red -> "red"
+  | Color.Blue -> "blue"
+  | Color.Yellow -> "yellow"
+  | Color.Green -> "green"
+  | Color.Orange -> "orange"
+  | Color.Pink -> "pink"
+  | Color.White -> "white"
+  | Color.Black -> "black"
+  | Color.Colorless -> "colorless"
+  | _ -> failwith "Not a color"
+
+(* return string list of player's routes [proutes] with routes in the format
+ * c0 name-c1 name-color *)
+let rec str_routes (proutes : Board.route list) =
+  match proutes with
+  | [] -> []
+  | h::t -> (
+    let sr = h.c0.name^"-"^h.c1.name^"-"^(color_str h.color) in
+    sr::(str_routes t))
+
 
 (* the state of the game after a turn is taken *)
 let rec do_turn i state =
@@ -174,7 +208,11 @@ and execute_turn state action num =
         Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
       pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
         printf "Route claimed";
-        1
+        if pl.ptype = AI then
+        (let psr = str_routes (List.filter (fun x -> x.owner=pl.pid) state.board.routes) in
+        printf "\nCurrent routes owned by %s: \n" (get_player pl.pid);
+        List.iter (printf "%s, ") psr; 1)
+        else 1
       |false, bd ->
         printf "Route can't be claimed";
         1))
