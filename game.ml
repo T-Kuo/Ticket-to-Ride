@@ -105,6 +105,27 @@ let rec str_routes (proutes : Board.route list) =
     sr::(str_routes t))
 
 
+(* the score of a player in a given state of the game *)
+let rec score_player p state =
+  match state.player_info with
+  |[] -> failwith "No such player."
+  |pl::ps ->
+    if pl.pid = p then pl.score
+    else score_player p {state with player_info = ps}
+
+(* the winner of the game in a given game state, if game is tied, returns
+ * one of the players who is tied. *)
+let determine_winner state =
+  let rec help cw cs state =
+    match state.player_info with
+    |[] -> cw
+    |pl::ps ->
+      if pl.score > cs then
+        help pl.pid pl.score {state with player_info = ps}
+      else help cw cs {state with player_info = ps} in
+
+  help None 0 state
+
 (* the state of the game after a turn is taken *)
 let rec do_turn i state =
   current_gui_state := Ivar.create ();
@@ -204,6 +225,18 @@ and execute_turn state action num =
                   board = bd;
                   player_info = (List.tl state.player_info) @ [np]} in
         current_state := ns;
+        let _ = (if np.trains_left < 3 then
+                  let winner = determine_winner ns in
+                  let w = (match winner with
+                           |Player1 -> "Player1"
+                           |Player2 -> "Player2";
+                           |Player3 -> "Player3";
+                           |Player4 -> "Player4";
+                           |Player5 -> "Player5";) in
+                  printf "%s wins" w;
+                  Pervasives.exit 0;
+                else
+                  ()) in
         let pl = List.hd ns.player_info in
         Ivar.fill !current_gui_state (ns.board, pl.pid, pl.ticket_hand,
       pl.train_hand, ns.train_deck.faceup, pl.trains_left, true);
@@ -297,26 +330,6 @@ and execute_turn state action num =
       1
     )
 
-(* the score of a player in a given state of the game *)
-let rec score_player p state =
-  match state.player_info with
-  |[] -> failwith "No such player."
-  |pl::ps ->
-    if pl.pid = p then pl.score
-    else score_player p {state with player_info = ps}
-
-(* the winner of the game in a given game state, if game is tied, returns
- * one of the players who is tied. *)
-let determine_winner state =
-  let rec help cw cs state =
-    match state.player_info with
-    |[] -> cw
-    |pl::ps ->
-      if pl.score > cs then
-        help pl.pid pl.score {state with player_info = ps}
-      else help cw cs {state with player_info = ps} in
-
-  help None 0 state
 
 (* convert player pid to string *)
 let get_player p =
