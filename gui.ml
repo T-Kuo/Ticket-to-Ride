@@ -225,7 +225,7 @@ let rec update_buttons state action board p train_hand =
   player_button := GButton.button ~label:curr_player ();
   !claims#attach ~left:0 ~top:4 (!player_button#coerce);
 
-  printf "\n%s: \n" (get_player p);
+  printf "\nCurrent routes for %s: \n" (get_player p);
   let psr = str_routes (List.filter (fun x -> x.owner=p) board.routes) in
   List.iter (printf "%s, ") psr;
 

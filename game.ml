@@ -1,9 +1,9 @@
+open Async.Std
 open Action
 open Board
 open Card
 open Color
 open Player
-open Async.Std
 
 type player_state = {
   pid : Player.player;
@@ -304,6 +304,7 @@ let main =
   current_state := state;
   Ivar.fill !current_gui_state (state.board, pl1.pid, pl1.ticket_hand,
       pl1.train_hand, state.train_deck.faceup, pl1.trains_left, true);
+  printf "Initializing GUI, start game\n%!";
   let _ = Gui.main_gui current_gui_state human_action () in
   do_turn 1 state
 
