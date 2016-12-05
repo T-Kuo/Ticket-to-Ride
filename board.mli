@@ -20,6 +20,21 @@ val se : city
 val ca : city
 val ol : city
 val da : city
+val ny : city
+val la : city
+val du : city
+val hu : city
+val sm : city
+val na : city
+val al : city
+val de : city
+val pi : city
+val sf : city
+val ci : city
+val ph : city
+val fe : city
+val bo : city
+val mi : city
 
 val ab1 : route
 val ac : route
